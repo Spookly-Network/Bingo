@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: de.exceptionflug:mccommons-core:2.0-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/de/exceptionflug/mccommons-core/2.0-SNAPSHOT/mccommons-core-2.0-20201028.234908-797.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/de/exceptionflug/mccommons-core/2.0-SNAPSHOT/mccommons-core-2.0-20201028.234908-797-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/de/exceptionflug/mccommons-core/2.0-SNAPSHOT/mccommons-core-2.0-20201028.234908-797-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
