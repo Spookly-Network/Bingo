@@ -4,3 +4,6 @@ main: de.zayon.bingo.Bingo
 api-version: 1.13
 depend: [MCCommons]
 authors: [DasNiklas]
+commands:
+  bingo:
+  start:

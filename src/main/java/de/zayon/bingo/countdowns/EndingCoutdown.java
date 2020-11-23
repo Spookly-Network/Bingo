@@ -23,10 +23,10 @@ public class EndingCoutdown {
     public static void teamWin(Team t) {
 
         GameState.state = GameState.END;
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            p.teleport(GameData.getLobbyLocation());
-            p.getInventory().clear();
-            p.getInventory().setItem(8, Items.createSkull("§7Zurück zur Lobby", "MHF_ArrowRight"));
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            player.teleport(GameData.getLobbyLocation());
+            player.getInventory().clear();
+            player.getInventory().setItem(8, Items.createSkullByUUID("§7Zurück zur Lobby", "50c8510b-5ea0-4d60-be9a-7d542d6cd156"));
         }
 
         Bukkit.broadcastMessage(StringData.getPrefix() + StringData.getHighlightColor() + "Team-" + t.getTeamID() + " §7hat das Spiel Gewonnen");
@@ -36,6 +36,7 @@ public class EndingCoutdown {
 //            p.sendMessage(de.Zayon.API.Main.Main.Prefix + "Du hast §c250 &7Punkte erhalten.");
             Bingo.getBingo().getUserFactory().updateWins(player, UserFactory.UpdateType.ADD, 1);
         }
+        Bukkit.getScheduler().cancelTasks(Bingo.getBingo());
         closeCountdown();
     }
 
@@ -46,10 +47,9 @@ public class EndingCoutdown {
             public void run() {
 
                 if(counter <= 10){
-                    Bukkit.broadcastMessage(StringData.getPrefix() + "Der Server startet in " + StringData.getHighlightColor() + counter + " Sekunden &7neu.");
+                    Bukkit.broadcastMessage(StringData.getPrefix() + "Der Server startet in " + StringData.getHighlightColor() + counter + " Sekunden §7neu.");
                 }
                 if (counter == 0) {
-//                    final Collection<? extends Player> onlinePlayer = Bukkit.getOnlinePlayers();
                     Bukkit.getScheduler().runTaskAsynchronously(Bingo.getBingo(), new Runnable() {
                         @Override
                         public void run() {

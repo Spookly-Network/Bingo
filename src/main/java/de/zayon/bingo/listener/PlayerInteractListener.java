@@ -46,7 +46,7 @@ public class PlayerInteractListener implements Listener {
                         inv.setItem(i, Items.createLore(Material.LIME_DYE, StringData.getHighlightColor()+"Team-" + (i+1), StringData.getHighlightColor() + t.getSize() + "§7/" + StringData.getHighlightColor() + t.getMaxSize(), 1));
                     } else if(t.getSize() == t.getMaxSize()) {
                         inv.setItem(i, Items.createLore(Material.RED_DYE, StringData.getHighlightColor()+"Team-" + (i+1), StringData.getHighlightColor() + t.getSize() + "§7/" + StringData.getHighlightColor() + t.getMaxSize(), 1));
-                    }else {
+                    } else {
                         inv.setItem(i, Items.createLore(Material.LIGHT_GRAY_DYE, StringData.getHighlightColor()+"Team-" + (i+1), StringData.getHighlightColor() + t.getSize() + "§7/" + StringData.getHighlightColor() + t.getMaxSize(), 1));
                     }
                     i++;
@@ -59,7 +59,7 @@ public class PlayerInteractListener implements Listener {
 
                 if(Bukkit.getOnlinePlayers().size() >= 2) {
                     Bukkit.getScheduler().cancelTasks(Bingo.getBingo());
-                    LobbyCountdown.startLobbyCountdown(true);
+                    Bingo.getBingo().getLobbyCountdown().startLobbyCountdown(true);
                 } else {
                     player.sendMessage(StringData.getPrefix() + "Es sind leider " + StringData.getHighlightColor() + "nicht genug Spieler §7Im Spiel.");
                 }

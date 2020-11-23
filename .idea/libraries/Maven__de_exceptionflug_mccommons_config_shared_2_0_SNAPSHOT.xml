@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: de.exceptionflug:mccommons-config-shared:2.0-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/de/exceptionflug/mccommons-config-shared/2.0-SNAPSHOT/mccommons-config-shared-2.0-20201028.234937-797.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/de/exceptionflug/mccommons-config-shared/2.0-SNAPSHOT/mccommons-config-shared-2.0-20201108.234940-821.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/de/exceptionflug/mccommons-config-shared/2.0-SNAPSHOT/mccommons-config-shared-2.0-20201028.234937-797-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/de/exceptionflug/mccommons-config-shared/2.0-SNAPSHOT/mccommons-config-shared-2.0-20201108.234940-821-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/de/exceptionflug/mccommons-config-shared/2.0-SNAPSHOT/mccommons-config-shared-2.0-20201028.234937-797-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/de/exceptionflug/mccommons-config-shared/2.0-SNAPSHOT/mccommons-config-shared-2.0-20201108.234940-821-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

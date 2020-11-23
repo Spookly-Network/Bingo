@@ -41,24 +41,24 @@ public class UserFactory {
     public void createUser(Player player) {
         userExists(player).whenCompleteAsync((exist, throwable) -> {
             if (throwable == null && !exist.booleanValue())
-                this.bingo.getDatabaseLib().executeUpdateAsync("INSERT INTO zayon_bingo_stats (uuid, kills, deaths) VALUES (?, ?, ?)", resultSet -> {}, player.getUniqueId().toString(), Integer.valueOf(0), Integer.valueOf(0));
+                this.bingo.getDatabaseLib().executeUpdateAsync("INSERT INTO zayon_bingo_stats (uuid, kills, deaths, games, wins) VALUES (?, ?, ?, ?, ?)", resultSet -> {}, player.getUniqueId().toString(), 0, 0, 0, 0);
         });
     }
 
     public int getKills(Player player) {
-        return ((Integer)this.bingo.getDatabaseLib().get("SELECT kills FROM zayon_bingo_stats WHERE uuid = ?", player.getUniqueId().toString(), "kills")).intValue();
+        return (Integer) this.bingo.getDatabaseLib().get("SELECT kills FROM zayon_bingo_stats WHERE uuid = ?", player.getUniqueId().toString(), "kills");
     }
 
     public int getDeaths(Player player) {
-        return ((Integer)this.bingo.getDatabaseLib().get("SELECT deaths FROM zayon_bingo_stats WHERE uuid = ?", player.getUniqueId().toString(), "deaths")).intValue();
+        return (Integer) this.bingo.getDatabaseLib().get("SELECT deaths FROM zayon_bingo_stats WHERE uuid = ?", player.getUniqueId().toString(), "deaths");
     }
 
     public int getWins(Player player) {
-        return ((Integer)this.bingo.getDatabaseLib().get("SELECT wins FROM zayon_bingo_stats WHERE uuid = ?", player.getUniqueId().toString(), "wins")).intValue();
+        return (Integer) this.bingo.getDatabaseLib().get("SELECT wins FROM zayon_bingo_stats WHERE uuid = ?", player.getUniqueId().toString(), "wins");
     }
 
     public int getGames(Player player) {
-        return ((Integer)this.bingo.getDatabaseLib().get("SELECT games FROM zayon_bingo_stats WHERE uuid = ?", player.getUniqueId().toString(), "games")).intValue();
+        return (Integer) this.bingo.getDatabaseLib().get("SELECT games FROM zayon_bingo_stats WHERE uuid = ?", player.getUniqueId().toString(), "games");
     }
 
     public void updateKills(Player player, UpdateType updateType, int kills) {
@@ -68,7 +68,7 @@ public class UserFactory {
         } else if (updateType == UpdateType.REMOVE) {
             newKills = getKills(player) - kills;
         }
-        this.bingo.getDatabaseLib().executeUpdateAsync("UPDATE zayon_bingo_stats SET kills = ? WHERE uuid = ?", resultSet -> {},Integer.valueOf(newKills), player.getUniqueId().toString() );
+        this.bingo.getDatabaseLib().executeUpdateAsync("UPDATE zayon_bingo_stats SET kills = ? WHERE uuid = ?", resultSet -> {},newKills, player.getUniqueId().toString() );
     }
 
     public void updateDeaths(Player player, UpdateType updateType, int deaths) {
@@ -78,27 +78,27 @@ public class UserFactory {
         } else if (updateType == UpdateType.REMOVE) {
             newDeaths = getDeaths(player) - deaths;
         }
-        this.bingo.getDatabaseLib().executeUpdateAsync("UPDATE zayon_knockbackffa_stats SET deaths = ? WHERE uuid = ?", resultSet -> {}, Integer.valueOf(newDeaths), player.getUniqueId().toString());
+        this.bingo.getDatabaseLib().executeUpdateAsync("UPDATE zayon_knockbackffa_stats SET deaths = ? WHERE uuid = ?", resultSet -> {}, newDeaths, player.getUniqueId().toString());
     }
 
     public void updateWins(Player player, UpdateType updateType, int wins) {
         int newWins = 0;
         if (updateType == UpdateType.ADD) {
-            newWins = getKills(player) + wins;
+            newWins = getWins(player) + wins;
         } else if (updateType == UpdateType.REMOVE) {
-            newWins = getKills(player) - wins;
+            newWins = getWins(player) - wins;
         }
-        this.bingo.getDatabaseLib().executeUpdateAsync("UPDATE zayon_bingo_stats SET wins = ? WHERE uuid = ?", resultSet -> {},Integer.valueOf(newWins), player.getUniqueId().toString() );
+        this.bingo.getDatabaseLib().executeUpdateAsync("UPDATE zayon_bingo_stats SET wins = ? WHERE uuid = ?", resultSet -> {},newWins, player.getUniqueId().toString() );
     }
 
     public void updateGames(Player player, UpdateType updateType, int games) {
         int newGames = 0;
         if (updateType == UpdateType.ADD) {
-            newGames = getKills(player) + games;
+            newGames = getGames(player) + games;
         } else if (updateType == UpdateType.REMOVE) {
-            newGames = getKills(player) - games;
+            newGames = getGames(player) - games;
         }
-        this.bingo.getDatabaseLib().executeUpdateAsync("UPDATE zayon_bingo_stats SET games = ? WHERE uuid = ?", resultSet -> {},Integer.valueOf(newGames), player.getUniqueId().toString() );
+        this.bingo.getDatabaseLib().executeUpdateAsync("UPDATE zayon_bingo_stats SET games = ? WHERE uuid = ?", resultSet -> {},newGames, player.getUniqueId().toString() );
     }
 
     public String getKDRatio(Player player) {

@@ -22,7 +22,7 @@ public class IngameCountdown {
     public static void ingameCountdown() {
 
         Bukkit.getScheduler().cancelTasks(Bingo.getBingo());
-
+        Bukkit.getOnlinePlayers().forEach(Bingo.getBingo().getScoreboardManager()::setUserScoreboard);
 
         Bukkit.getScheduler().scheduleSyncRepeatingTask(Bingo.getBingo(), new Runnable() {
             @Override
@@ -37,19 +37,13 @@ public class IngameCountdown {
                         }
                     }
                 });
-
-//                if(counter != 0) {
-//                    for (Player p : Bukkit.getOnlinePlayers()) {
-//                        GameVars.checkInv(p);
-//                    }
-//                }
                 if(counter == 0) {
                     Bukkit.broadcastMessage(StringData.getPrefix() + "Das Spiel ist zuende, es gibt keinen Gewinner.");
                     GameState.state = GameState.END;
                     for (Player player : Bukkit.getOnlinePlayers()) {
                         player.teleport(GameData.getLobbyLocation());
                         player.getInventory().clear();
-                        player.getInventory().setItem(8, Items.createSkull("§7Zurück zur Lobby", "MHF_ArrowRight"));
+                        player.getInventory().setItem(8, Items.createSkull("§7Zurück zur Lobby", "50c8510b-5ea0-4d60-be9a-7d542d6cd156"));
                     }
                     EndingCoutdown.closeCountdown();
                 }
@@ -57,5 +51,4 @@ public class IngameCountdown {
             }
         }, 20L, 20L);
     }
-
 }

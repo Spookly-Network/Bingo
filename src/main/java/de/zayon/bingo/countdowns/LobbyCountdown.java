@@ -12,24 +12,28 @@ import de.zayon.bingo.util.UtilFunctions;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class LobbyCountdown {
 
-    public static int counter = GameData.getStartTime();
     private final Bingo bingo;
+
     public LobbyCountdown(Bingo bingo) {
         this.bingo = bingo;
     }
+
+    public static int counter = GameData.getStartTime();
+    static int scheduler = 0;
 
     public static void startLobbyCountdown(boolean fast) {
         if (fast) {
             counter = 10;
         }
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(Bingo.getBingo(), new Runnable() {
+        scheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(Bingo.getBingo(), new Runnable() {
             @Override
             public void run() {
 
@@ -67,12 +71,25 @@ public class LobbyCountdown {
                             Bukkit.broadcastMessage(StringData.getPrefix() + "Es sind nicht genug Spieler Online. Der Countdown startet neu.");
                         } else {
 
-                            Bukkit.getScheduler().cancelTasks(Bingo.getBingo());
                             Bukkit.broadcastMessage(StringData.getPrefix() + "§7Das Spiel startet " + StringData.getHighlightColor() + "jetzt§!");
 
-                            // SET BINGO ITEM IN GAMEDATA
-                            fillItemList();
+                            //SET WORLD AND LOCATION SETTINGS
+                            Bukkit.getScheduler().runTaskAsynchronously(Bingo.getBingo(), () -> {
+                                //SET WORLD SETTINGS
+                                World world = Bukkit.getWorld("world");
+                                world.getWorldBorder().setCenter(new Location(world, 0, 0, 0));
+                                world.getWorldBorder().setSize(GameData.getWorldSize());
 
+                                //TODO Needs work / seems not functional
+                                //SET TEAM SPAWNPOINT AND AVOID noSpawnBioms
+                                for (Team t : TeamData.getTeamCache()) {
+                                    Location block = UtilFunctions.getRandomLocation("world");
+                                    while (GameData.getNoSpawnBiomes().contains(block.getBlock().getBiome().toString())) {
+                                        block = UtilFunctions.getRandomLocation("world");
+                                    }
+                                    t.setSpawnLoc(block);
+                                }
+                            });
 
                             // SET CURRENT PLAYERLIST TO GAMEDATA
                             // SET PLAYER IN TEAMS
@@ -81,34 +98,18 @@ public class LobbyCountdown {
                                 players.playSound(players.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10.0F, 1.0F);
                                 playerList.add(players);
                                 Bingo.getBingo().getUserFactory().updateGames(players, UserFactory.UpdateType.ADD, 1);
+                                Bingo.getBingo().getScoreboardManager().removeUserScoreboard(players);
                                 int i = 0;
                                 while (!TeamData.playerTeamCache.containsKey(players)) {
                                     if (TeamData.teamCache.get(i).getSize() < GameData.getTeamSize()) {
                                         TeamData.teamCache.get(i).addMate(players);
                                         TeamData.playerTeamCache.put(players, i);
-                                        Bukkit.broadcastMessage(players.getName() + " -> " + TeamData.teamCache.get(i).getTeamID());
                                     }
 
                                     i++;
                                 }
                             }
                             GameData.setIngame(playerList);
-
-                            //SET WORLD SETTINGS
-                            World world = Bukkit.getWorld("world");
-                            world.getWorldBorder().setCenter(new Location(world, 0, 0, 0));
-                            world.getWorldBorder().setSize(GameData.getWorldSize());
-
-                            //TODO Needs work / seems not functional
-                            //SET TEAM SPAWNPOINT AND AVOID noSpawnBioms
-                            for (Team t : TeamData.getTeamCache()) {
-                                Location block = UtilFunctions.getRandomLocation("world");
-                                while (GameData.getNoSpawnBiomes().contains(block.getBlock().getBiome().toString())) {
-                                    block = UtilFunctions.getRandomLocation("world");
-                                }
-                                t.setSpawnLoc(block);
-                            }
-
                             //TELEPORT PLAYER TO WORLD
                             for (Player p : GameData.getIngame()) {
                                 Team t = TeamData.getTeamCache().get(TeamData.getPlayerTeamCache().get(p));
@@ -118,10 +119,10 @@ public class LobbyCountdown {
                                 p.setGameMode(GameMode.SURVIVAL);
                             }
 
-
                             //SET GAME STATUS TO INGAME
                             BukkitCloudNetHelper.changeToIngame();
-                            IngameCountdown.ingameCountdown();
+                            Bukkit.getScheduler().cancelTask(scheduler);
+                            Bingo.getBingo().getIngameCountdown().ingameCountdown();
                             GameState.state = GameState.INGAME;
                             Bukkit.broadcastMessage("SUCCESS");
                         }
@@ -143,6 +144,7 @@ public class LobbyCountdown {
                 m = Material.getMaterial(UtilFunctions.getRandomStringOutList(GameData.getItemPool()));
             }
             list.add(m);
+            Bukkit.getConsoleSender().sendMessage(m.toString());
         }
         GameData.setItemsToFind(list);
     }

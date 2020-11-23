@@ -3,6 +3,8 @@ package de.zayon.bingo;
 import de.exceptionflug.mccommons.config.shared.ConfigFactory;
 import de.exceptionflug.mccommons.config.shared.ConfigWrapper;
 import de.exceptionflug.mccommons.config.spigot.SpigotConfig;
+import de.zayon.bingo.commands.BingoCommand;
+import de.zayon.bingo.commands.StartCommand;
 import de.zayon.bingo.countdowns.EndingCoutdown;
 import de.zayon.bingo.countdowns.IngameCountdown;
 import de.zayon.bingo.countdowns.LobbyCountdown;
@@ -49,6 +51,9 @@ public class Bingo extends JavaPlugin {
     @Getter private BasicInventory basicInventory;
     @Getter private BuildListener buildListener;
 
+    @Getter private BingoCommand bingoCommand;
+    @Getter private StartCommand startCommand;
+
     @Getter private EndingCoutdown endingCoutdown;
     @Getter private IngameCountdown ingameCountdown;
     @Getter private LobbyCountdown lobbyCountdown;
@@ -81,6 +86,9 @@ public class Bingo extends JavaPlugin {
         this.buildListener = new BuildListener(this);
         this.basicInventory = new BasicInventory(this);
 
+        this.bingoCommand = new BingoCommand(this);
+        this.startCommand = new StartCommand(this);
+
         WorldCreator w = WorldCreator.name("WLobby");
         Bukkit.createWorld(w);
         bingo.getServer().getWorlds().add(Bukkit.getWorld("WLobby"));
@@ -101,11 +109,16 @@ public class Bingo extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(this.weatherChangeListener, this);
         Bukkit.getPluginManager().registerEvents(this.buildListener, this);
         Bukkit.getPluginManager().registerEvents(this.basicInventory, this);
+        getCommand("bingo").setExecutor(this.bingoCommand);
+        getCommand("start").setExecutor(this.startCommand);
 
         Bukkit.getWorld("world").setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
+        Bukkit.getWorld("WLobby").setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
         Bukkit.getWorld("world").setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
         Bukkit.getWorld("world").setGameRule(GameRule.DO_WEATHER_CYCLE, false);
         Bukkit.getWorld("world").setTime(5000L);
+        // SET BINGO ITEM IN GAMEDATA
+        this.getLobbyCountdown().fillItemList();
 
     }
 
