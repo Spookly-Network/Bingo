@@ -9,6 +9,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
+import java.util.Locale;
+
 public class InventoryChecker {
 
     public static void checkInv(Player player) {
@@ -23,24 +25,21 @@ public class InventoryChecker {
                     case 0:
                         if (!list.getIt0()) {
                             list.setIt0(true);
-                            TeamData.getTeamCache().get(TeamData.getPlayerTeamCache().get(player)).setPickList(list);
-                            Bukkit.broadcastMessage(StringData.getPrefix() + StringData.getHighlightColor() + "Team-" + team.getTeamID() + " §7hat " + StringData.getHighlightColor() + GameData.getItemsToFind().get(i).toString() + " §7gefunden.");
+                            action(player, i, team, list);
 
                         }
                         break;
                     case 1:
                         if (!list.getIt1()) {
                             list.setIt1(true);
-                            TeamData.getTeamCache().get(TeamData.getPlayerTeamCache().get(player)).setPickList(list);
-                            Bukkit.broadcastMessage(StringData.getPrefix() + StringData.getHighlightColor() + "Team-" + team.getTeamID() + " §7hat " + StringData.getHighlightColor() + GameData.getItemsToFind().get(i).toString() + " §7gefunden.");
-
+                            action(player, i, team, list);
                         }
                         break;
                     case 2:
                         if (!list.getIt2()) {
                             list.setIt2(true);
                             TeamData.getTeamCache().get(TeamData.getPlayerTeamCache().get(player)).setPickList(list);
-                            Bukkit.broadcastMessage(StringData.getPrefix() + StringData.getHighlightColor() + "Team-" + team.getTeamID() + " §7hat " + StringData.getHighlightColor() + GameData.getItemsToFind().get(i).toString() + " §7gefunden.");
+                            action(player, i, team, list);
 
                         }
                         break;
@@ -48,7 +47,7 @@ public class InventoryChecker {
                         if (!list.getIt3()) {
                             list.setIt3(true);
                             TeamData.getTeamCache().get(TeamData.getPlayerTeamCache().get(player)).setPickList(list);
-                            Bukkit.broadcastMessage(StringData.getPrefix() + StringData.getHighlightColor() + "Team-" + team.getTeamID() + " §7hat " + StringData.getHighlightColor() + GameData.getItemsToFind().get(i).toString() + " §7gefunden.");
+                            action(player, i, team, list);
 
                         }
                         break;
@@ -56,7 +55,7 @@ public class InventoryChecker {
                         if (!list.getIt4()) {
                             list.setIt4(true);
                             TeamData.getTeamCache().get(TeamData.getPlayerTeamCache().get(player)).setPickList(list);
-                            Bukkit.broadcastMessage(StringData.getPrefix() + StringData.getHighlightColor() + "Team-" + team.getTeamID() + " §7hat " + StringData.getHighlightColor() + GameData.getItemsToFind().get(i).toString() + " §7gefunden.");
+                            action(player, i, team, list);
 
                         }
                         break;
@@ -64,7 +63,7 @@ public class InventoryChecker {
                         if (!list.getIt5()) {
                             list.setIt5(true);
                             TeamData.getTeamCache().get(TeamData.getPlayerTeamCache().get(player)).setPickList(list);
-                            Bukkit.broadcastMessage(StringData.getPrefix() + StringData.getHighlightColor() + "Team-" + team.getTeamID() + " §7hat " + StringData.getHighlightColor() + GameData.getItemsToFind().get(i).toString() + " §7gefunden.");
+                            action(player, i, team, list);
 
                         }
                         break;
@@ -72,7 +71,7 @@ public class InventoryChecker {
                         if (!list.getIt6()) {
                             list.setIt6(true);
                             TeamData.getTeamCache().get(TeamData.getPlayerTeamCache().get(player)).setPickList(list);
-                            Bukkit.broadcastMessage(StringData.getPrefix() + StringData.getHighlightColor() + "Team-" + team.getTeamID() + " §7hat " + StringData.getHighlightColor() + GameData.getItemsToFind().get(i).toString() + " §7gefunden.");
+                            action(player, i, team, list);
 
                         }
                         break;
@@ -80,7 +79,7 @@ public class InventoryChecker {
                         if (!list.getIt7()) {
                             list.setIt7(true);
                             TeamData.getTeamCache().get(TeamData.getPlayerTeamCache().get(player)).setPickList(list);
-                            Bukkit.broadcastMessage(StringData.getPrefix() + StringData.getHighlightColor() + "Team-" + team.getTeamID() + " §7hat " + StringData.getHighlightColor() + GameData.getItemsToFind().get(i).toString() + " §7gefunden.");
+                            action(player, i, team, list);
 
                         }
                         break;
@@ -88,7 +87,7 @@ public class InventoryChecker {
                         if (!list.getIt8()) {
                             list.setIt8(true);
                             TeamData.getTeamCache().get(TeamData.getPlayerTeamCache().get(player)).setPickList(list);
-                            Bukkit.broadcastMessage(StringData.getPrefix() + StringData.getHighlightColor() + "Team-" + team.getTeamID() + " §7hat " + StringData.getHighlightColor() + GameData.getItemsToFind().get(i).toString() + " §7gefunden.");
+                            action(player, i, team, list);
 
                         }
                         break;
@@ -102,5 +101,11 @@ public class InventoryChecker {
                 }
             }
         }
+    }
+
+    private static void action(Player player, int i, Team team, PickList list) {
+        TeamData.getTeamCache().get(TeamData.getPlayerTeamCache().get(player)).setPickList(list);
+        String itemName = GameData.getItemsToFind().get(i).toString();
+        Bukkit.broadcastMessage(StringData.getPrefix() + StringData.getHighlightColor() + "Team-" + (team.getTeamID()+1) + " §7hat " + StringData.getHighlightColor() + itemName.substring(0, 1).toUpperCase() + itemName.substring(1).replace("_", " ").toLowerCase(Locale.GERMANY) + " §7gefunden.");
     }
 }

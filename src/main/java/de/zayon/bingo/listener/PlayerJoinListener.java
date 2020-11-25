@@ -44,7 +44,7 @@ public class PlayerJoinListener implements Listener {
 
 //            player.teleport(GameData.getLobbyLocation());
             Bukkit.broadcastMessage(StringData.getPrefix() + StringData.getHighlightColor() + player.getDisplayName() + " §7hat das Spiel betreten.");
-            player.getInventory().setItem(8, Items.createSkullByUUID("§7Zurück zur Lobby", "50c8510b-5ea0-4d60-be9a-7d542d6cd156"));
+            player.getInventory().setItem(8, Items.createItem(Material.HEART_OF_THE_SEA,"§7Zurück zur Lobby", 1));
             player.getInventory().setItem(0, Items.createItem(Material.TOTEM_OF_UNDYING, "§7Teamauswahl", 1));
             player.updateInventory();
 
@@ -67,7 +67,7 @@ public class PlayerJoinListener implements Listener {
             player.setGameMode(GameMode.SURVIVAL);
             player.setFlying(true);
             player.setAllowFlight(true);
-            player.getInventory().setItem(8, Items.createSkullByUUID("§7Zurück zur Lobby", "50c8510b-5ea0-4d60-be9a-7d542d6cd156"));
+            player.getInventory().setItem(8, Items.createItem(Material.HEART_OF_THE_SEA,"§7Zurück zur Lobby", 1));
             player.getInventory().setItem(0, Items.createItem(Material.COMPASS, "§7Spieler", 1));
 
             for (Player all : Bukkit.getOnlinePlayers()) {

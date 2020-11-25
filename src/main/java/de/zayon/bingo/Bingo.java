@@ -117,7 +117,7 @@ public class Bingo extends JavaPlugin {
         Bukkit.getWorld("world").setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
         Bukkit.getWorld("world").setGameRule(GameRule.DO_WEATHER_CYCLE, false);
         Bukkit.getWorld("world").setTime(5000L);
-        // SET BINGO ITEM IN GAMEDATA
+        // SET BINGO ITEMS IN GAMEDATA
         this.getLobbyCountdown().fillItemList();
 
     }

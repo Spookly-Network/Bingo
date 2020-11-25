@@ -3,6 +3,8 @@ package de.zayon.bingo.listener;
 import de.zayon.bingo.Bingo;
 import de.zayon.bingo.data.GameData;
 import de.zayon.bingo.data.GameState;
+import de.zayon.bingo.data.StringData;
+import de.zayon.bingo.data.TeamData;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -25,6 +27,10 @@ public class AsyncPlayerChatListener implements Listener {
         e.setCancelled(true);
 
         for(Player players: Bukkit.getOnlinePlayers()) {
+            String teamPrefix = "";
+            if(TeamData.getPlayerTeamCache().containsKey(players)) {
+                teamPrefix = "§7[" + StringData.getHighlightColor() + "T-" + (TeamData.getTeamCache().get(TeamData.getPlayerTeamCache().get(p)).getTeamID() + 1) + "§7] ";
+            }
 
             if(GameState.state != GameState.END) {
                 if(!GameData.getIngame().contains(p)) {
@@ -32,10 +38,10 @@ public class AsyncPlayerChatListener implements Listener {
                         players.sendMessage("§4✘§r " + p.getDisplayName() + "§7: §r" + e.getMessage());
                     }
                 } else {
-                    players.sendMessage(p.getDisplayName() + "§7: §r" + e.getMessage());
+                    players.sendMessage(teamPrefix + p.getDisplayName() + "§7: §r" + e.getMessage());
                 }
             } else {
-                players.sendMessage(p.getDisplayName() + "§7: §r" + e.getMessage());
+                players.sendMessage(teamPrefix + p.getDisplayName() + "§7: §r" + e.getMessage());
             }
         }
     }

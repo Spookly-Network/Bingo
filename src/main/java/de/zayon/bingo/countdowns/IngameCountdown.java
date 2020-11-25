@@ -18,13 +18,14 @@ public class IngameCountdown {
     public IngameCountdown(Bingo bingo) {
         this.bingo = bingo;
     }
+    public static int ingameCounter = 0;
 
     public static void ingameCountdown() {
 
         Bukkit.getScheduler().cancelTasks(Bingo.getBingo());
         Bukkit.getOnlinePlayers().forEach(Bingo.getBingo().getScoreboardManager()::setUserScoreboard);
 
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(Bingo.getBingo(), new Runnable() {
+        ingameCounter = Bukkit.getScheduler().scheduleSyncRepeatingTask(Bingo.getBingo(), new Runnable() {
             @Override
             public void run() {
 
@@ -37,6 +38,7 @@ public class IngameCountdown {
                         }
                     }
                 });
+
                 if(counter == 0) {
                     Bukkit.broadcastMessage(StringData.getPrefix() + "Das Spiel ist zuende, es gibt keinen Gewinner.");
                     GameState.state = GameState.END;

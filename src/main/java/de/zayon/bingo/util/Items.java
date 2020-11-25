@@ -1,6 +1,5 @@
 package de.zayon.bingo.util;
 
-import de.zayon.zayon_core_api.util.UUIDFetcher;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;

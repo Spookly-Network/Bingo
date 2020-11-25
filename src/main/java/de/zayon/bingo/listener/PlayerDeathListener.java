@@ -22,7 +22,7 @@ public class PlayerDeathListener implements Listener {
     public void handleDeath(PlayerDeathEvent event) {
 
         Player player = event.getEntity();
-        event.setDeathMessage(StringData.getPrefix() + StringData.getHighlightColor() + player.getName() + " ist gestorben.");
+        event.setDeathMessage(StringData.getPrefix() + StringData.getHighlightColor() + player.getName() + " §7ist gestorben.");
 
     }
 

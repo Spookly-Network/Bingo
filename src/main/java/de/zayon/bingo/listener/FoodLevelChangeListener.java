@@ -15,12 +15,6 @@ public class FoodLevelChangeListener implements Listener {
     }
     @EventHandler
     public void onHunger(FoodLevelChangeEvent e) {
-        if (!GameData.getIsHunger()) {
-            e.setCancelled(true);
-        } else {
-            if (GameState.state != GameState.INGAME) {
-                e.setCancelled(true);
-            }
-        }
+        e.setCancelled(true);
     }
 }

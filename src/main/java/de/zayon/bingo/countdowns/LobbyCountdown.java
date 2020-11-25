@@ -9,6 +9,7 @@ import de.zayon.bingo.data.TeamData;
 import de.zayon.bingo.data.helper.Team;
 import de.zayon.bingo.factory.UserFactory;
 import de.zayon.bingo.util.UtilFunctions;
+import lombok.Getter;
 import org.bukkit.*;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
@@ -26,7 +27,7 @@ public class LobbyCountdown {
     }
 
     public static int counter = GameData.getStartTime();
-    static int scheduler = 0;
+    public static int scheduler = 0;
 
     public static void startLobbyCountdown(boolean fast) {
         if (fast) {
@@ -55,7 +56,7 @@ public class LobbyCountdown {
                         Bukkit.broadcastMessage("");
                         Bukkit.broadcastMessage(StringData.getPrefix() + "§7Das Spiel wird gestartet.");
                         Bukkit.broadcastMessage(StringData.getPrefix() + "§7Spieler Online: " + StringData.getHighlightColor() + Bukkit.getOnlinePlayers().size() + "§7/" + StringData.getHighlightColor() + (GameData.getTeamAmount() * GameData.getTeamSize()) + "§7.");
-                        Bukkit.broadcastMessage(StringData.getPrefix() + "§7Map: " + StringData.getHighlightColor() + GameData.getMapName() + " §7gebaut von " + StringData.getHighlightColor() + GameData.getMapBuilder() + "§7.");
+//                        Bukkit.broadcastMessage(StringData.getPrefix() + "§7Map: " + StringData.getHighlightColor() + GameData.getMapName() + " §7gebaut von " + StringData.getHighlightColor() + GameData.getMapBuilder() + "§7.");
                         Bukkit.broadcastMessage(StringData.getPrefix() + "§7Das Spiel startet in " + StringData.getHighlightColor() + counter + " §7Sekunden!");
                         Bukkit.broadcastMessage("");
 
@@ -79,6 +80,8 @@ public class LobbyCountdown {
                                 World world = Bukkit.getWorld("world");
                                 world.getWorldBorder().setCenter(new Location(world, 0, 0, 0));
                                 world.getWorldBorder().setSize(GameData.getWorldSize());
+                                world.setDifficulty(Difficulty.EASY);
+                                world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
 
                                 //TODO Needs work / seems not functional
                                 //SET TEAM SPAWNPOINT AND AVOID noSpawnBioms
@@ -124,7 +127,6 @@ public class LobbyCountdown {
                             Bukkit.getScheduler().cancelTask(scheduler);
                             Bingo.getBingo().getIngameCountdown().ingameCountdown();
                             GameState.state = GameState.INGAME;
-                            Bukkit.broadcastMessage("SUCCESS");
                         }
                     }
                 }
