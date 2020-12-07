@@ -8,6 +8,8 @@ import de.zayon.bingo.data.StringData;
 import de.zayon.bingo.data.helper.Team;
 import de.zayon.bingo.factory.UserFactory;
 import de.zayon.bingo.util.Items;
+import de.zayon.zayon_core_api.PointsAPI.PointsAPI;
+import de.zayon.zayon_core_api.ZayonCoreApi;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -27,7 +29,7 @@ public class EndingCoutdown {
         GameState.state = GameState.END;
         Bukkit.getScheduler().cancelTask(IngameCountdown.ingameCounter);
         for (Player player : Bukkit.getOnlinePlayers()) {
-            player.sendTitle(StringData.getHighlightColor() + "Team-" + t.getTeamID(), " §7hat das Spiel Gewonnen", 20, 60, 0);
+            player.sendTitle(StringData.getHighlightColor() + "Team-" + (t.getTeamID()+1), " §7hat das Spiel Gewonnen", 20, 60, 0);
             player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 100, 0);
             player.spawnParticle(Particle.TOTEM, player.getLocation().add(0,1,0), 250);
         }
@@ -38,18 +40,22 @@ public class EndingCoutdown {
                 player.getInventory().clear();
                 player.getInventory().setItem(8, Items.createSkullByUUID("§7Zurück zur Lobby", "50c8510b-5ea0-4d60-be9a-7d542d6cd156"));
             }
-            Bukkit.broadcastMessage(StringData.getPrefix() + StringData.getHighlightColor() + "Team-" + t.getTeamID() + " §7hat das Spiel Gewonnen");
+            Bukkit.broadcastMessage("");
+            Bukkit.broadcastMessage(StringData.getPrefix() + StringData.getHighlightColor() + "Team-" + (t.getTeamID() + 1) + " §7hat das Spiel Gewonnen");
             Bukkit.broadcastMessage(StringData.getPrefix() + "Zu diesem Team gehören:");
             for (Player player : t.getMates()) {
                 Bukkit.broadcastMessage("§7- " + player.getDisplayName());
                 //TODO Add coins
-//            CoinsAPI.addCoins(p, 250);
-//            p.sendMessage(de.Zayon.API.Main.Main.Prefix + "Du hast §c250 &7Punkte erhalten.");
+
+                ZayonCoreApi.getZayonCoreApi().getPointsAPI().updatePoints(player, PointsAPI.UpdateType.ADD, 250);
+                player.sendMessage(de.zayon.zayon_core_api.data.StringData.getPrefix() + "Du hast §c250 §7Punkte erhalten.");
+
                 Bingo.getBingo().getUserFactory().updateWins(player, UserFactory.UpdateType.ADD, 1);
             }
+            Bukkit.broadcastMessage("");
             Bukkit.getScheduler().cancelTasks(Bingo.getBingo());
             closeCountdown();
-        }, 60);
+        }, 100);
     }
 
     public static void closeCountdown() {
