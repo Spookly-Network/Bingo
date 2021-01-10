@@ -10,7 +10,7 @@ import de.zayon.bingo.data.GameState;
 import de.zayon.bingo.data.StringData;
 import de.zayon.bingo.data.TeamData;
 import de.zayon.bingo.data.helper.Team;
-import de.zayon.zayon_core_api.util.items.Items;
+import de.zayon.zayonapi.items.Items;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

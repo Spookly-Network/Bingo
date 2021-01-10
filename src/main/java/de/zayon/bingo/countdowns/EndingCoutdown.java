@@ -8,8 +8,9 @@ import de.zayon.bingo.data.StringData;
 import de.zayon.bingo.data.helper.Team;
 import de.zayon.bingo.factory.UserFactory;
 import de.zayon.bingo.util.Items;
-import de.zayon.zayon_core_api.PointsAPI.PointsAPI;
-import de.zayon.zayon_core_api.ZayonCoreApi;
+import de.zayon.zayonapi.PointsAPI.PointsAPI;
+import de.zayon.zayonapi.ZayonAPI;
+import de.zayon.zayonapi.ZayonAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -47,8 +48,8 @@ public class EndingCoutdown {
                 Bukkit.broadcastMessage("§7- " + player.getDisplayName());
                 //TODO Add coins
 
-                ZayonCoreApi.getZayonCoreApi().getPointsAPI().updatePoints(player, PointsAPI.UpdateType.ADD, 250);
-                player.sendMessage(de.zayon.zayon_core_api.data.StringData.getPrefix() + "Du hast §c250 §7Punkte erhalten.");
+                ZayonAPI.getZayonAPI().getPointsAPI().updatePoints(player, PointsAPI.UpdateType.ADD, 250);
+                player.sendMessage(StringData.getPrefix() + "Du hast §c250 §7Punkte erhalten.");
 
                 Bingo.getBingo().getUserFactory().updateWins(player, UserFactory.UpdateType.ADD, 1);
             }

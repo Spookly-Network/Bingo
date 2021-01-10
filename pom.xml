@@ -139,9 +139,9 @@
         <dependency>
             <groupId>de.zayon</groupId>
             <artifactId>ZayonAPI</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.2.1-STABLE</version>
             <scope>system</scope>
-            <systemPath>E:/Projects/Plugins/Zayon_Core_API/target/Zayon_Core_API-1.0-STABLE.jar</systemPath>
+            <systemPath>E:/Projects/Plugins/ZayonAPI/target/original-ZayonAPI-1.2.1-STABLE.jar</systemPath>
         </dependency>
     </dependencies>
 </project>
