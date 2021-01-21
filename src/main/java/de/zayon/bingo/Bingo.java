@@ -15,6 +15,7 @@ import de.zayon.bingo.factory.UserFactory;
 import de.zayon.bingo.inventroy.BasicInventory;
 import de.zayon.bingo.listener.*;
 import de.zayon.bingo.manager.GroupManager;
+import de.zayon.bingo.manager.RecipeManager;
 import de.zayon.bingo.manager.ScoreboardManager;
 import de.zayon.bingo.sidebar.SidebarCache;
 import de.zayon.bingo.util.DatabaseLib;
@@ -37,6 +38,8 @@ public class Bingo extends JavaPlugin {
     @Getter private DatabaseLib databaseLib;
     @Getter private UserFactory userFactory;
 
+    @Getter private RecipeManager recipeManager;
+
     @Getter private AsyncPlayerChatListener asyncPlayerChatListener;
     @Getter private DamageListener damageListener;
     @Getter private FoodLevelChangeListener foodLevelChangeListener;
@@ -50,6 +53,7 @@ public class Bingo extends JavaPlugin {
     @Getter private WeatherChangeListener weatherChangeListener;
     @Getter private BasicInventory basicInventory;
     @Getter private BuildListener buildListener;
+
 
     @Getter private BingoCommand bingoCommand;
     @Getter private StartCommand startCommand;
@@ -71,6 +75,7 @@ public class Bingo extends JavaPlugin {
         this.groupManager = new GroupManager();
         this.databaseLib = new DatabaseLib(this);
         this.userFactory = new UserFactory(this);
+        this.recipeManager = new RecipeManager(this);
 
         this.asyncPlayerChatListener = new AsyncPlayerChatListener(this);
         this.damageListener = new DamageListener(this);
@@ -117,6 +122,8 @@ public class Bingo extends JavaPlugin {
         Bukkit.getWorld("world").setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
         Bukkit.getWorld("world").setGameRule(GameRule.DO_WEATHER_CYCLE, false);
         Bukkit.getWorld("world").setTime(5000L);
+
+        Bukkit.addRecipe(recipeManager.composter());
         // SET BINGO ITEMS IN GAMEDATA
         this.getLobbyCountdown().fillItemList();
 
