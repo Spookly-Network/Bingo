@@ -5,19 +5,15 @@ import de.zayon.bingo.Bingo;
 import de.zayon.bingo.data.GameData;
 import de.zayon.bingo.data.GameState;
 import de.zayon.bingo.data.StringData;
-import de.zayon.bingo.data.TeamData;
-import de.zayon.bingo.data.helper.Team;
 import de.zayon.bingo.factory.UserFactory;
 import de.zayon.bingo.util.UtilFunctions;
+import de.zayon.zayonapi.TeamAPI.Team;
+import de.zayon.zayonapi.ZayonAPI;
 import io.sentry.Sentry;
-import lombok.Getter;
 import org.bukkit.*;
-import org.bukkit.block.Biome;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class LobbyCountdown {
 
@@ -87,12 +83,12 @@ public class LobbyCountdown {
 
                                     //TODO Needs work / seems not functional
                                     //SET TEAM SPAWNPOINT AND AVOID noSpawnBioms
-                                    for (Team t : TeamData.getTeamCache()) {
+                                    for (Team team : ZayonAPI.getZayonAPI().getTeamAPI().getRegisteredTeams()) {
                                         Location block = UtilFunctions.getRandomLocation("world");
                                         while (GameData.getNoSpawnBiomes().contains(block.getBlock().getBiome().toString())) {
                                             block = UtilFunctions.getRandomLocation("world");
                                         }
-                                        t.setSpawnLoc(block);
+                                        team.addToMemory("spawnLoc", block);
                                     }
                                 });
 
@@ -104,30 +100,24 @@ public class LobbyCountdown {
                                     playerList.add(players);
                                     Bingo.getBingo().getUserFactory().updateGames(players, UserFactory.UpdateType.ADD, 1);
                                     Bingo.getBingo().getScoreboardManager().removeUserScoreboard(players);
-                                    int i = 0;
-                                    while (!TeamData.playerTeamCache.containsKey(players)) {
-                                        if (TeamData.teamCache.get(i).getSize() < GameData.getTeamSize()) {
-                                            TeamData.teamCache.get(i).addMate(players);
-                                            TeamData.playerTeamCache.put(players, i);
-                                        }
-
-                                        i++;
+                                    if(!GameData.getTeamCache().containsKey(players)) {
+                                        ZayonAPI.getZayonAPI().getTeamAPI().addToLowestTeam(players);
                                     }
                                 }
                                 GameData.setIngame(playerList);
                                 //TELEPORT PLAYER TO WORLD
-                                for (Player p : GameData.getIngame()) {
-                                    Team t = TeamData.getTeamCache().get(TeamData.getPlayerTeamCache().get(p));
-                                    Location loc = t.getSpawnLoc();
-                                    p.teleport(loc);
-                                    p.getInventory().clear();
-                                    p.setGameMode(GameMode.SURVIVAL);
+                                for (Player player : GameData.getIngame()) {
+                                    Team team = GameData.getTeamCache().get(player);
+                                    Location loc = (Location) team.getMemory().get("spawnLoc");
+                                    player.teleport(loc);
+                                    player.getInventory().clear();
+                                    player.setGameMode(GameMode.SURVIVAL);
                                 }
 
                                 //SET GAME STATUS TO INGAME
                                 BukkitCloudNetHelper.changeToIngame();
                                 Bukkit.getScheduler().cancelTask(scheduler);
-                                Bingo.getBingo().getIngameCountdown().ingameCountdown();
+                                IngameCountdown.ingameCountdown();
                                 GameState.state = GameState.INGAME;
                             }
                         }
@@ -151,7 +141,6 @@ public class LobbyCountdown {
                 m = Material.getMaterial(UtilFunctions.getRandomStringOutList(GameData.getItemPool()));
             }
             list.add(m);
-            Bukkit.getConsoleSender().sendMessage(m.toString());
         }
         GameData.setItemsToFind(list);
     }

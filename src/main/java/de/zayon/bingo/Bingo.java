@@ -1,7 +1,6 @@
 package de.zayon.bingo;
 
 import de.exceptionflug.mccommons.config.shared.ConfigFactory;
-import de.exceptionflug.mccommons.config.shared.ConfigWrapper;
 import de.exceptionflug.mccommons.config.spigot.SpigotConfig;
 import de.zayon.bingo.commands.BingoCommand;
 import de.zayon.bingo.commands.StartCommand;
@@ -9,8 +8,7 @@ import de.zayon.bingo.countdowns.EndingCoutdown;
 import de.zayon.bingo.countdowns.IngameCountdown;
 import de.zayon.bingo.countdowns.LobbyCountdown;
 import de.zayon.bingo.data.GameData;
-import de.zayon.bingo.data.TeamData;
-import de.zayon.bingo.data.helper.Team;
+import de.zayon.bingo.data.helper.PickList;
 import de.zayon.bingo.factory.UserFactory;
 import de.zayon.bingo.inventroy.BasicInventory;
 import de.zayon.bingo.listener.*;
@@ -18,15 +16,20 @@ import de.zayon.bingo.manager.GroupManager;
 import de.zayon.bingo.manager.RecipeManager;
 import de.zayon.bingo.manager.ScoreboardManager;
 import de.zayon.bingo.sidebar.SidebarCache;
-import de.zayon.bingo.util.DatabaseLib;
+import de.zayon.zayonapi.TeamAPI.Team;
+import de.zayon.zayonapi.ZayonAPI;
+import de.zayon.zayonapi.util.DatabaseLib;
 import io.sentry.Sentry;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.GameRule;
 import org.bukkit.WorldCreator;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Bingo extends JavaPlugin {
 
@@ -67,6 +70,9 @@ public class Bingo extends JavaPlugin {
     @Override
     public void onEnable() {
         bingo = this;
+        Sentry.init(options -> {
+            options.setDsn("https://5e51f97e5edd4dc8860034b847860e82@o508721.ingest.sentry.io/5601680");
+        });
 
         this.generalConfig = ConfigFactory.create(new File(getDataFolder(), "general_settings.yml"), SpigotConfig.class);
         this.locationConfig = ConfigFactory.create(new File(getDataFolder(), "location_settings.yml"), SpigotConfig.class);
@@ -74,7 +80,7 @@ public class Bingo extends JavaPlugin {
         this.sidebarCache = new SidebarCache();
         this.scoreboardManager = new ScoreboardManager(this);
         this.groupManager = new GroupManager();
-        this.databaseLib = new DatabaseLib(this);
+        this.databaseLib = ZayonAPI.getZayonAPI().getDatabaseLib();
         this.userFactory = new UserFactory(this);
         this.recipeManager = new RecipeManager(this);
 
@@ -128,17 +134,38 @@ public class Bingo extends JavaPlugin {
         // SET BINGO ITEMS IN GAMEDATA
         this.getLobbyCountdown().fillItemList();
 
-        Sentry.init(options -> {
-            options.setDsn("https://5e51f97e5edd4dc8860034b847860e82@o508721.ingest.sentry.io/5601680");
-        });
+
+
     }
 
     public static void loadTeams() {
-        for (int i = 0; i < GameData.getTeamAmount(); i++) {
-            Team t = new Team();
-            t.setTeamID(i);
-            t.setMaxSize(GameData.getTeamSize());
-            TeamData.teamCache.add(t);
-        }
+            ArrayList<ChatColor> colors = new ArrayList<ChatColor>(
+                    Arrays.asList(
+                            ChatColor.RED,
+                            ChatColor.BLUE,
+                            ChatColor.GREEN,
+                            ChatColor.YELLOW,
+                            ChatColor.LIGHT_PURPLE,
+                            ChatColor.AQUA,
+                            ChatColor.GOLD,
+                            ChatColor.DARK_AQUA,
+                            ChatColor.DARK_RED,
+                            ChatColor.DARK_BLUE,
+                            ChatColor.DARK_PURPLE));
+
+
+            for (int i = 0; i < GameData.getTeamAmount(); i++) {
+
+                Team team = new Team();
+                PickList pickList = new PickList();
+
+                team.setMaxTeamSize(GameData.getTeamSize());
+                team.setTeamColor(colors.get(i));
+                team.setTeamName(colors.get(i) + "Team-" + (i + 1));
+                team.addToMemory("picklist", pickList);
+                ZayonAPI.getZayonAPI().getTeamAPI().addTeam(team);
+
+            }
+
     }
 }

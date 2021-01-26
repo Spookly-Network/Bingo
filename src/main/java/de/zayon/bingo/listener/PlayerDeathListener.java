@@ -3,8 +3,8 @@ package de.zayon.bingo.listener;
 import de.zayon.bingo.Bingo;
 import de.zayon.bingo.data.GameData;
 import de.zayon.bingo.data.StringData;
-import de.zayon.bingo.data.TeamData;
-import org.bukkit.Bukkit;
+import de.zayon.zayonapi.TeamAPI.Team;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,6 +29,7 @@ public class PlayerDeathListener implements Listener {
     @EventHandler
     public void handleRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
-        event.setRespawnLocation(TeamData.getTeamCache().get(TeamData.getPlayerTeamCache().get(player)).getSpawnLoc());
+        Team team = GameData.getTeamCache().get(player);
+        event.setRespawnLocation((Location) team.getMemory().get("spawnLoc"));
     }
 }

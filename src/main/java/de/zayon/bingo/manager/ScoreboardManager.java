@@ -3,13 +3,13 @@ package de.zayon.bingo.manager;
 import de.zayon.bingo.Bingo;
 import de.zayon.bingo.countdowns.IngameCountdown;
 import de.zayon.bingo.data.*;
-import de.zayon.bingo.data.helper.Team;
+import de.zayon.bingo.data.helper.PickList;
 import de.zayon.bingo.sidebar.Sidebar;
 import de.zayon.bingo.sidebar.SidebarCache;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.TranslatableComponent;
+import de.zayon.zayonapi.TeamAPI.Team;
+import de.zayon.zayonapi.TeamAPI.TeamAPI;
+import de.zayon.zayonapi.ZayonAPI;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_14_R1.inventory.CraftItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -87,66 +87,68 @@ public class ScoreboardManager {
     }
 
     private String getTeam(Player player) {
-        if(TeamData.getPlayerTeamCache().containsKey(player)) {
-            return "Team-" + (TeamData.getTeamCache().get(TeamData.getPlayerTeamCache().get(player)).getTeamID() + 1);
+        if(GameData.getTeamCache().containsKey(player)) {
+            return GameData.getTeamCache().get(player).getTeamName();
         } else {
-            return "-";
+            return "Kein Team";
         }
     }
 
     private String getText(Player player, int index) {
         Team team;
-        if (!TeamData.getPlayerTeamCache().containsKey(player)) {
-            team = TeamData.teamCache.get(0);
+        if (!GameData.getTeamCache().containsKey(player)) {
+            team = ZayonAPI.getZayonAPI().getTeamAPI().getRegisteredTeams().get(0);
         } else {
-            team = TeamData.teamCache.get(TeamData.getPlayerTeamCache().get(player));
+            team = GameData.getTeamCache().get(player);
         }
         String itemName = GameData.getItemsToFind().get(index).toString();
         String color = "§c";
+        PickList pickList = (PickList) team.getMemory().get("picklist");
+
 
         switch (index) {
             case 0:
-                if (team.getPickList().getIt0()) {
+                if (pickList.getIt0()) {
                     color = "§a";
                 }
                 break;
             case 1:
-                if (team.getPickList().getIt1()) {
+                if (pickList.getIt1()) {
                     color = "§a";
                 }
                 break;
             case 2:
-                if (team.getPickList().getIt2()) {
+                if (pickList.getIt2()) {
                     color = "§a";
                 }
                 break;
             case 3:
-                if (team.getPickList().getIt3()) {
+                if (pickList.getIt3()) {
                     color = "§a";
                 }
                 break;
             case 4:
-                if (team.getPickList().getIt4()) {
+                if (pickList.getIt4()) {
                     color = "§a";
                 }
                 break;
             case 5:
-                if (team.getPickList().getIt5()) {
+                if (pickList.getIt5()) {
                     color = "§a";
                 }
                 break;
             case 6:
-                if (team.getPickList().getIt6()) {
+                if (pickList.getIt6()) {
                     color = "§a";
                 }
                 break;
             case 7:
-                if (team.getPickList().getIt7()) {
+                if (pickList.getIt7()) {
                     color = "§a";
                 }
                 break;
             case 8:
-                if (team.getPickList().getIt8()) {
+                if (pickList.getIt8()) {
                     color = "§a";
                 }
                 break;

@@ -1,6 +1,7 @@
 package de.zayon.bingo.data;
 
 import de.zayon.bingo.Bingo;
+import de.zayon.zayonapi.TeamAPI.Team;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Delegate;
@@ -12,6 +13,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class GameData {
@@ -27,6 +29,7 @@ public class GameData {
     @Getter private static String mapName = Bingo.getBingo().getGeneralConfig().getOrSetDefault("config.map.name", "MapName");
     @Getter private static String mapBuilder = Bingo.getBingo().getGeneralConfig().getOrSetDefault("config.map.builder", "Builder");
     @Getter private static Location lobbyLocation = new Location(Bukkit.getWorld("WLobby"), 4.5, 44, -71.5, 0, 0);
+    @Getter private static HashMap<Player, Team> teamCache = new HashMap<>();
 
     @Getter @Setter private static ArrayList<Material> itemsToFind = new ArrayList<Material>();
     @Getter @Setter private static ArrayList<Player> ingame = new ArrayList<Player>();
