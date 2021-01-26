@@ -1,6 +1,7 @@
 package de.zayon.bingo.listener;
 
 import de.zayon.bingo.Bingo;
+import de.zayon.bingo.data.GameState;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.weather.WeatherChangeEvent;
@@ -14,5 +15,8 @@ public class WeatherChangeListener implements Listener {
     }
 
     @EventHandler
-    public void handleWeatherChange(WeatherChangeEvent event) {event.setCancelled(true);}
+    public void handleWeatherChange(WeatherChangeEvent event) {
+        if(GameState.state != GameState.INGAME)
+            event.setCancelled(true);
+    }
 }
