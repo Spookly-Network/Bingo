@@ -19,6 +19,7 @@ import de.zayon.bingo.manager.RecipeManager;
 import de.zayon.bingo.manager.ScoreboardManager;
 import de.zayon.bingo.sidebar.SidebarCache;
 import de.zayon.bingo.util.DatabaseLib;
+import io.sentry.Sentry;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameRule;
@@ -119,14 +120,17 @@ public class Bingo extends JavaPlugin {
 
         Bukkit.getWorld("world").setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
         Bukkit.getWorld("WLobby").setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
-        Bukkit.getWorld("world").setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
-        Bukkit.getWorld("world").setGameRule(GameRule.DO_WEATHER_CYCLE, false);
+        Bukkit.getWorld("WLobby").setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+        Bukkit.getWorld("WLobby").setGameRule(GameRule.DO_WEATHER_CYCLE, false);
         Bukkit.getWorld("world").setTime(5000L);
 
         Bukkit.addRecipe(recipeManager.composter());
         // SET BINGO ITEMS IN GAMEDATA
         this.getLobbyCountdown().fillItemList();
 
+        Sentry.init(options -> {
+            options.setDsn("https://5e51f97e5edd4dc8860034b847860e82@o508721.ingest.sentry.io/5601680");
+        });
     }
 
     public static void loadTeams() {

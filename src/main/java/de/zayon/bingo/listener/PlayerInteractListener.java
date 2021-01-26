@@ -11,6 +11,7 @@ import de.zayon.bingo.data.StringData;
 import de.zayon.bingo.data.TeamData;
 import de.zayon.bingo.data.helper.Team;
 import de.zayon.zayonapi.items.Items;
+import io.sentry.Sentry;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -29,41 +30,43 @@ public class PlayerInteractListener implements Listener {
 
     @EventHandler
     public void handleInteract(PlayerInteractEvent event) {
+        try {
+            Player player = event.getPlayer();
+            if (GameState.state != GameState.INGAME) {
+                event.setCancelled(true);
+            }
 
-        Player player = event.getPlayer();
+            if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
+                if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equalsIgnoreCase("§7Teamauswahl")) {
+                    Inventory inv = Bukkit.createInventory(null, (int) Math.ceil(GameData.getTeamAmount() / 9) * 9, StringData.getHighlightColor() + "Team auswahl");
 
-        if (GameState.state != GameState.INGAME) {
-            event.setCancelled(true);
-        }
-
-        if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
-            if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equalsIgnoreCase("§7Teamauswahl")) {
-                Inventory inv = Bukkit.createInventory(null, (int) Math.ceil(GameData.getTeamAmount() / 9) * 9, StringData.getHighlightColor() +"Team auswahl");
-
-                int i = 0;
-                for (Team t : TeamData.getTeamCache()) {
-                    if (t.getMates().contains(player)) {
-                        inv.setItem(i, Items.createLore(Material.LIME_DYE, StringData.getHighlightColor()+"Team-" + (i+1), StringData.getHighlightColor() + t.getSize() + "§7/" + StringData.getHighlightColor() + t.getMaxSize(), 1));
-                    } else if(t.getSize() == t.getMaxSize()) {
-                        inv.setItem(i, Items.createLore(Material.RED_DYE, StringData.getHighlightColor()+"Team-" + (i+1), StringData.getHighlightColor() + t.getSize() + "§7/" + StringData.getHighlightColor() + t.getMaxSize(), 1));
-                    } else {
-                        inv.setItem(i, Items.createLore(Material.LIGHT_GRAY_DYE, StringData.getHighlightColor()+"Team-" + (i+1), StringData.getHighlightColor() + t.getSize() + "§7/" + StringData.getHighlightColor() + t.getMaxSize(), 1));
+                    int i = 0;
+                    for (Team t : TeamData.getTeamCache()) {
+                        if (t.getMates().contains(player)) {
+                            inv.setItem(i, Items.createLore(Material.LIME_DYE, StringData.getHighlightColor() + "Team-" + (i + 1), StringData.getHighlightColor() + t.getSize() + "§7/" + StringData.getHighlightColor() + t.getMaxSize(), 1));
+                        } else if (t.getSize() == t.getMaxSize()) {
+                            inv.setItem(i, Items.createLore(Material.RED_DYE, StringData.getHighlightColor() + "Team-" + (i + 1), StringData.getHighlightColor() + t.getSize() + "§7/" + StringData.getHighlightColor() + t.getMaxSize(), 1));
+                        } else {
+                            inv.setItem(i, Items.createLore(Material.LIGHT_GRAY_DYE, StringData.getHighlightColor() + "Team-" + (i + 1), StringData.getHighlightColor() + t.getSize() + "§7/" + StringData.getHighlightColor() + t.getMaxSize(), 1));
+                        }
+                        i++;
                     }
-                    i++;
-                }
 
-                player.openInventory(inv);
-            } else if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equalsIgnoreCase("§7Zurück zur Lobby")) {
-                BridgePlayerManager.getInstance().proxySendPlayer(BridgePlayerManager.getInstance().getOnlinePlayer(player.getUniqueId()), "Lobby-1");
-            } else if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equalsIgnoreCase("§7Starte das Spiel")) {
+                    player.openInventory(inv);
+                } else if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equalsIgnoreCase("§7Zurück zur Lobby")) {
+                    BridgePlayerManager.getInstance().proxySendPlayer(BridgePlayerManager.getInstance().getOnlinePlayer(player.getUniqueId()), "Lobby-1");
+                } else if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equalsIgnoreCase("§7Starte das Spiel")) {
 
-                if(Bukkit.getOnlinePlayers().size() >= 2) {
-                    Bukkit.getScheduler().cancelTasks(Bingo.getBingo());
-                    Bingo.getBingo().getLobbyCountdown().startLobbyCountdown(true);
-                } else {
-                    player.sendMessage(StringData.getPrefix() + "Es sind leider " + StringData.getHighlightColor() + "nicht genug Spieler §7Im Spiel.");
+                    if (Bukkit.getOnlinePlayers().size() >= 2) {
+                        Bukkit.getScheduler().cancelTasks(Bingo.getBingo());
+                        Bingo.getBingo().getLobbyCountdown().startLobbyCountdown(true);
+                    } else {
+                        player.sendMessage(StringData.getPrefix() + "Es sind leider " + StringData.getHighlightColor() + "nicht genug Spieler §7Im Spiel.");
+                    }
                 }
             }
+        } catch (Exception e) {
+            Sentry.captureException(e);
         }
     }
 }
