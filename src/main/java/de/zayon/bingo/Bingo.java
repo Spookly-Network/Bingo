@@ -120,8 +120,8 @@ public class Bingo extends JavaPlugin {
 
         Bukkit.getWorld("world").setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
         Bukkit.getWorld("WLobby").setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
-        Bukkit.getWorld("world").setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
-        Bukkit.getWorld("world").setGameRule(GameRule.DO_WEATHER_CYCLE, false);
+        Bukkit.getWorld("WLobby").setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+        Bukkit.getWorld("WLobby").setGameRule(GameRule.DO_WEATHER_CYCLE, false);
         Bukkit.getWorld("world").setTime(5000L);
 
         Bukkit.addRecipe(recipeManager.composter());
