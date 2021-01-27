@@ -78,7 +78,6 @@ public class PlayerJoinListener implements Listener {
                 player.sendMessage("§7Nutze um zu den Kompass um dich zu einem Spieler zu teleportieren.");
             }
         } catch (Exception e) {
-            Bukkit.broadcastMessage(e.toString());
             Sentry.captureException(e);
         }
     }

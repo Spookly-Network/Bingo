@@ -51,10 +51,21 @@ public class LobbyCountdown {
                             }
 
                         } else if (counter == 5) {
+
+                            //SET TEAM SPAWNPOINT AND AVOID noSpawnBioms
+                            Bukkit.getScheduler().runTaskAsynchronously(Bingo.getBingo(), () -> {
+                                for (Team team : ZayonAPI.getZayonAPI().getTeamAPI().getRegisteredTeams()) {
+                                    Location block = UtilFunctions.getRandomLocation("world");
+                                    while (GameData.getNoSpawnBiomes().contains(block.getBlock().getBiome().toString())) {
+                                        block = UtilFunctions.getRandomLocation("world");
+                                    }
+                                    team.addToMemory("spawnLoc", block);
+                                }
+                            });
+
                             Bukkit.broadcastMessage("");
                             Bukkit.broadcastMessage(StringData.getPrefix() + "§7Das Spiel wird gestartet.");
                             Bukkit.broadcastMessage(StringData.getPrefix() + "§7Spieler Online: " + StringData.getHighlightColor() + Bukkit.getOnlinePlayers().size() + "§7/" + StringData.getHighlightColor() + (GameData.getTeamAmount() * GameData.getTeamSize()) + "§7.");
-//                        Bukkit.broadcastMessage(StringData.getPrefix() + "§7Map: " + StringData.getHighlightColor() + GameData.getMapName() + " §7gebaut von " + StringData.getHighlightColor() + GameData.getMapBuilder() + "§7.");
                             Bukkit.broadcastMessage(StringData.getPrefix() + "§7Das Spiel startet in " + StringData.getHighlightColor() + counter + " §7Sekunden!");
                             Bukkit.broadcastMessage("");
 
@@ -72,8 +83,9 @@ public class LobbyCountdown {
 
                                 Bukkit.broadcastMessage(StringData.getPrefix() + "§7Das Spiel startet " + StringData.getHighlightColor() + "jetzt§!");
 
-                                //SET WORLD AND LOCATION SETTINGS
+                                //Run Tasks Async
                                 Bukkit.getScheduler().runTaskAsynchronously(Bingo.getBingo(), () -> {
+
                                     //SET WORLD SETTINGS
                                     World world = Bukkit.getWorld("world");
                                     world.getWorldBorder().setCenter(new Location(world, 0, 0, 0));
@@ -81,48 +93,64 @@ public class LobbyCountdown {
                                     world.setDifficulty(Difficulty.EASY);
                                     world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, true);
 
-                                    //TODO Needs work / seems not functional
-                                    //SET TEAM SPAWNPOINT AND AVOID noSpawnBioms
-                                    for (Team team : ZayonAPI.getZayonAPI().getTeamAPI().getRegisteredTeams()) {
-                                        Location block = UtilFunctions.getRandomLocation("world");
-                                        while (GameData.getNoSpawnBiomes().contains(block.getBlock().getBiome().toString())) {
-                                            block = UtilFunctions.getRandomLocation("world");
+                                    // SET CURRENT PLAYERLIST TO GAMEDATA
+                                    // SET PLAYER IN TEAMS
+                                    ArrayList<Player> playerList = new ArrayList<>();
+                                    Bukkit.getOnlinePlayers().forEach(players -> {
+                                        players.playSound(players.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10.0F, 1.0F);
+                                        playerList.add(players);
+                                        Bingo.getBingo().getUserFactory().updateGames(players, UserFactory.UpdateType.ADD, 1);
+                                        Bingo.getBingo().getScoreboardManager().removeUserScoreboard(players);
+                                        if (!GameData.getTeamCache().containsKey(players)) {
+                                            Team team = ZayonAPI.getZayonAPI().getTeamAPI().addToLowestTeam(players);
+                                            GameData.getTeamCache().put(players, team);
                                         }
-                                        team.addToMemory("spawnLoc", block);
-                                    }
+                                    });
+                                    GameData.setIngame(playerList);
+
+                                    //TELEPORT PLAYER TO WORLD
+                                    ZayonAPI.getZayonAPI().getTeamAPI().getRegisteredTeams().forEach(team -> {
+                                        Location loc = (Location) team.getMemory().get("spawnLoc");
+                                        team.getRegisteredPlayers().forEach(player -> {
+                                            UtilFunctions.ActionBar(player, "§7Du wirst teleportiert...");
+                                            player.getInventory().clear();
+                                            player.setGameMode(GameMode.SURVIVAL);
+                                            Bukkit.getScheduler().runTask(ZayonAPI.getZayonAPI(), () -> player.teleport(loc));
+                                        });
+                                    });
+
+
+//                                    GameData.getIngame().forEach(player -> {
+//                                        Bukkit.getConsoleSender().sendMessage("In teleport");
+//                                        Team team = GameData.getTeamCache().get(player);
+//                                        Bukkit.getScheduler().runTask(Bingo.getBingo(), () -> {
+//                                            Bukkit.getConsoleSender().sendMessage("In SYNC");
+//                                            Bukkit.getConsoleSender().sendMessage("--------");
+//                                            Bukkit.getConsoleSender().sendMessage(team.getMemory().toString());
+//                                            Bukkit.getConsoleSender().sendMessage("0");
+//                                            Location loc = (Location) team.getMemory().get("spawnLoc");
+//                                            Bukkit.getConsoleSender().sendMessage("1");
+//                                            UtilFunctions.ActionBar(player, "§7Du wirst teleportiert...");
+//                                            Bukkit.getConsoleSender().sendMessage("2");
+//                                            player.teleport(loc);
+//                                            Bukkit.getConsoleSender().sendMessage("3");
+//                                            Bukkit.getConsoleSender().sendMessage("SYNC End");
+//                                        });
+//                                        Bukkit.getConsoleSender().sendMessage("OUT SYNC");
+//
+//                                    });
+
+
+                                    //SET GAME STATUS TO INGAME
+                                    BukkitCloudNetHelper.changeToIngame();
+                                    Bukkit.getScheduler().cancelTask(scheduler);
+                                    IngameCountdown.ingameCountdown();
+                                    GameState.state = GameState.INGAME;
+
                                 });
-
-                                // SET CURRENT PLAYERLIST TO GAMEDATA
-                                // SET PLAYER IN TEAMS
-                                ArrayList<Player> playerList = new ArrayList<>();
-                                for (final Player players : Bukkit.getOnlinePlayers()) {
-                                    players.playSound(players.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10.0F, 1.0F);
-                                    playerList.add(players);
-                                    Bingo.getBingo().getUserFactory().updateGames(players, UserFactory.UpdateType.ADD, 1);
-                                    Bingo.getBingo().getScoreboardManager().removeUserScoreboard(players);
-                                    if(!GameData.getTeamCache().containsKey(players)) {
-                                        ZayonAPI.getZayonAPI().getTeamAPI().addToLowestTeam(players);
-                                    }
-                                }
-                                GameData.setIngame(playerList);
-                                //TELEPORT PLAYER TO WORLD
-                                for (Player player : GameData.getIngame()) {
-                                    Team team = GameData.getTeamCache().get(player);
-                                    Location loc = (Location) team.getMemory().get("spawnLoc");
-                                    player.teleport(loc);
-                                    player.getInventory().clear();
-                                    player.setGameMode(GameMode.SURVIVAL);
-                                }
-
-                                //SET GAME STATUS TO INGAME
-                                BukkitCloudNetHelper.changeToIngame();
-                                Bukkit.getScheduler().cancelTask(scheduler);
-                                IngameCountdown.ingameCountdown();
-                                GameState.state = GameState.INGAME;
                             }
                         }
                     }
-
                     counter--;
                 }
             }, 20L, 20L);

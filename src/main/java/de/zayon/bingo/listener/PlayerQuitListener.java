@@ -6,6 +6,8 @@ import de.zayon.bingo.countdowns.LobbyCountdown;
 import de.zayon.bingo.data.GameData;
 import de.zayon.bingo.data.GameState;
 import de.zayon.bingo.data.StringData;
+import de.zayon.zayonapi.TeamAPI.Team;
+import de.zayon.zayonapi.TeamAPI.TeamAPI;
 import de.zayon.zayonapi.ZayonAPI;
 import io.sentry.Sentry;
 import org.bukkit.Bukkit;
@@ -35,11 +37,23 @@ public class PlayerQuitListener implements Listener {
                 }
             } else if (GameState.state == GameState.INGAME && GameData.getIngame().contains(player)) {
                 event.setQuitMessage(StringData.getPrefix() + StringData.getHighlightColor() + event.getPlayer().getName() + " §7hat das Spiel verlassen.");
+
+                Team team = GameData.getTeamCache().get(player);
+                team.removePlayer(player);
+                GameData.getTeamCache().remove(player);
+                if(team.getRegisteredPlayers().isEmpty()) {
+                    ZayonAPI.getZayonAPI().getTeamAPI().removeTeam(team);
+                }
+
                 if (ZayonAPI.getZayonAPI().getTeamAPI().getRegisteredTeams().size() == 1) {
                     EndingCoutdown.teamWin(GameData.getTeamCache().get(GameData.getIngame().get(0)));
                 }
             } else {
                 event.setQuitMessage("");
+            }
+
+            if(GameData.getTeamCache().containsKey(player)) {
+                GameData.getTeamCache().get(player).removePlayer(player);
             }
         } catch (Exception e) {
             Sentry.captureException(e);
