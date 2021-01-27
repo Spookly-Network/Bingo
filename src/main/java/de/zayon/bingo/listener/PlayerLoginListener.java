@@ -21,7 +21,7 @@ public class PlayerLoginListener implements Listener {
 
     @EventHandler
     public void handleLogin(PlayerLoginEvent event) {
-        try {
+//        try {
             if ((GameState.state == GameState.LOBBY) && (Bukkit.getOnlinePlayers().size() == Bukkit.getMaxPlayers())) {
                 if (event.getPlayer().hasPermission("vip")) {
 
@@ -48,8 +48,8 @@ public class PlayerLoginListener implements Listener {
                 event.getPlayer().sendMessage("§cDas Spiel startet derzeit neu.");
                 BridgePlayerManager.getInstance().proxySendPlayer(BridgePlayerManager.getInstance().getOnlinePlayer(event.getPlayer().getUniqueId()), "Lobby-1");
             }
-        } catch (Exception e) {
-            Sentry.captureException(e);
-        }
+//        } catch (Exception e) {
+//            Sentry.captureException(e);
+//        }
     }
 }

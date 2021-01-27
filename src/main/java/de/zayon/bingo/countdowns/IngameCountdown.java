@@ -6,11 +6,10 @@ import de.zayon.bingo.data.GameState;
 import de.zayon.bingo.data.StringData;
 import de.zayon.bingo.data.helper.InventoryChecker;
 import de.zayon.bingo.util.Items;
+import de.zayon.zayonapi.ZayonAPI;
 import io.sentry.Sentry;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-
-import java.util.Collection;
 
 public class IngameCountdown {
 
@@ -28,6 +27,7 @@ public class IngameCountdown {
         try {
             Bukkit.getScheduler().cancelTasks(Bingo.getBingo());
             Bukkit.getOnlinePlayers().forEach(Bingo.getBingo().getScoreboardManager()::setUserScoreboard);
+            ZayonAPI.getZayonAPI().getTeamAPI().removeEmptyTeams();
 
             ingameCounter = Bukkit.getScheduler().scheduleSyncRepeatingTask(Bingo.getBingo(), new Runnable() {
                 @Override

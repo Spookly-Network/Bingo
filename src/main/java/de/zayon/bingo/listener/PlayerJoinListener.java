@@ -36,6 +36,7 @@ public class PlayerJoinListener implements Listener {
             player.setHealthScale(20D);
             player.setHealth(20.0D);
             player.setFoodLevel(20);
+            player.setGameMode(GameMode.SURVIVAL);
             event.setJoinMessage("");
 
             this.bingo.getUserFactory().createUser(player);
@@ -49,7 +50,7 @@ public class PlayerJoinListener implements Listener {
                 player.getInventory().setItem(0, Items.createItem(Material.TOTEM_OF_UNDYING, "§7Teamauswahl", 1));
                 player.updateInventory();
 
-                ArrayList playerList = GameData.getIngame();
+                ArrayList<Player> playerList = GameData.getIngame();
                 playerList.add(player);
                 GameData.setIngame(playerList);
 
@@ -57,14 +58,12 @@ public class PlayerJoinListener implements Listener {
                     player.getInventory().setItem(1, Items.createItem(Material.DIAMOND, "§7Starte das Spiel", 1));
                 }
                 if (Bukkit.getOnlinePlayers().size() == 2) {
-                    this.bingo.getLobbyCountdown().startLobbyCountdown(false);
+                    LobbyCountdown.startLobbyCountdown(false);
                 }
                 for (Player all : Bukkit.getOnlinePlayers()) {
                     all.showPlayer(Bingo.getBingo(), player);
                 }
             } else if (GameState.state == GameState.INGAME) {
-
-//            player.teleport(GameData.getLobbyLocation());
                 player.setGameMode(GameMode.SURVIVAL);
                 player.setFlying(true);
                 player.setAllowFlight(true);

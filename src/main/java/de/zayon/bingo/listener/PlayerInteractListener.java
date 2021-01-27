@@ -1,15 +1,11 @@
 package de.zayon.bingo.listener;
 
-import de.dytanic.cloudnet.driver.CloudNetDriver;
 import de.dytanic.cloudnet.ext.bridge.BridgePlayerManager;
-import de.dytanic.cloudnet.ext.bridge.bukkit.BukkitCloudNetBridgePlugin;
 import de.zayon.bingo.Bingo;
-import de.zayon.bingo.countdowns.LobbyCountdown;
 import de.zayon.bingo.data.GameData;
 import de.zayon.bingo.data.GameState;
 import de.zayon.bingo.data.StringData;
-import de.zayon.bingo.data.TeamData;
-import de.zayon.bingo.data.helper.Team;
+import de.zayon.bingo.inventroy.TeamSelectInventroy;
 import de.zayon.zayonapi.items.Items;
 import io.sentry.Sentry;
 import org.bukkit.Bukkit;
@@ -38,21 +34,7 @@ public class PlayerInteractListener implements Listener {
 
             if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
                 if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equalsIgnoreCase("§7Teamauswahl")) {
-                    Inventory inv = Bukkit.createInventory(null, (int) Math.ceil(GameData.getTeamAmount() / 9) * 9, StringData.getHighlightColor() + "Team auswahl");
-
-                    int i = 0;
-                    for (Team t : TeamData.getTeamCache()) {
-                        if (t.getMates().contains(player)) {
-                            inv.setItem(i, Items.createLore(Material.LIME_DYE, StringData.getHighlightColor() + "Team-" + (i + 1), StringData.getHighlightColor() + t.getSize() + "§7/" + StringData.getHighlightColor() + t.getMaxSize(), 1));
-                        } else if (t.getSize() == t.getMaxSize()) {
-                            inv.setItem(i, Items.createLore(Material.RED_DYE, StringData.getHighlightColor() + "Team-" + (i + 1), StringData.getHighlightColor() + t.getSize() + "§7/" + StringData.getHighlightColor() + t.getMaxSize(), 1));
-                        } else {
-                            inv.setItem(i, Items.createLore(Material.LIGHT_GRAY_DYE, StringData.getHighlightColor() + "Team-" + (i + 1), StringData.getHighlightColor() + t.getSize() + "§7/" + StringData.getHighlightColor() + t.getMaxSize(), 1));
-                        }
-                        i++;
-                    }
-
-                    player.openInventory(inv);
+                    player.openInventory((Inventory) new TeamSelectInventroy(player).build());
                 } else if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equalsIgnoreCase("§7Zurück zur Lobby")) {
                     BridgePlayerManager.getInstance().proxySendPlayer(BridgePlayerManager.getInstance().getOnlinePlayer(player.getUniqueId()), "Lobby-1");
                 } else if (player.getInventory().getItemInMainHand().getItemMeta().getDisplayName().equalsIgnoreCase("§7Starte das Spiel")) {
