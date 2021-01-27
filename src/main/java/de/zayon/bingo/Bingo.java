@@ -130,7 +130,12 @@ public class Bingo extends JavaPlugin {
         Bukkit.getWorld("WLobby").setGameRule(GameRule.DO_WEATHER_CYCLE, false);
         Bukkit.getWorld("world").setTime(5000L);
 
-        Bukkit.addRecipe(recipeManager.composter());
+        Bukkit.addRecipe(recipeManager.composterJungle());
+        Bukkit.addRecipe(recipeManager.composterSpruce());
+        Bukkit.addRecipe(recipeManager.composterBirch());
+        Bukkit.addRecipe(recipeManager.composterAcacia());
+        Bukkit.addRecipe(recipeManager.composterDarkOak());
+        Bukkit.addRecipe(recipeManager.composterOak());
         // SET BINGO ITEMS IN GAMEDATA
         this.getLobbyCountdown().fillItemList();
 

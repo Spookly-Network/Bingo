@@ -14,18 +14,57 @@ public class RecipeManager {
         this.bingo = bingo;
     }
 
-    public ShapedRecipe composter() {
+    public ShapedRecipe composterOak() {
         ItemStack item = new ItemStack(Material.COMPOSTER);
         NamespacedKey key = new NamespacedKey(this.bingo, "composter");
         ShapedRecipe recipe = new ShapedRecipe(key, item);
         recipe.shape("w w", "w w", "www");
         recipe.setIngredient('w', Material.OAK_SLAB);
-        recipe.setIngredient('w', Material.BIRCH_SLAB);
-        recipe.setIngredient('w', Material.SPRUCE_SLAB);
-        recipe.setIngredient('w', Material.JUNGLE_SLAB);
-        recipe.setIngredient('w', Material.DARK_OAK_SLAB);
-        recipe.setIngredient('w', Material.ACACIA_SLAB);
+        return recipe;
+    }
 
+    public ShapedRecipe composterSpruce() {
+        ItemStack item = new ItemStack(Material.COMPOSTER);
+        NamespacedKey key = new NamespacedKey(this.bingo, "composter");
+        ShapedRecipe recipe = new ShapedRecipe(key, item);
+        recipe.shape("w w", "w w", "www");
+        recipe.setIngredient('w', Material.SPRUCE_SLAB);
+        return recipe;
+    }
+
+    public ShapedRecipe composterBirch() {
+        ItemStack item = new ItemStack(Material.COMPOSTER);
+        NamespacedKey key = new NamespacedKey(this.bingo, "composter");
+        ShapedRecipe recipe = new ShapedRecipe(key, item);
+        recipe.shape("w w", "w w", "www");
+        recipe.setIngredient('w', Material.BIRCH_SLAB);
+        return recipe;
+    }
+
+    public ShapedRecipe composterJungle() {
+        ItemStack item = new ItemStack(Material.COMPOSTER);
+        NamespacedKey key = new NamespacedKey(this.bingo, "composter");
+        ShapedRecipe recipe = new ShapedRecipe(key, item);
+        recipe.shape("w w", "w w", "www");
+        recipe.setIngredient('w', Material.JUNGLE_SLAB);
+        return recipe;
+    }
+
+    public ShapedRecipe composterDarkOak() {
+        ItemStack item = new ItemStack(Material.COMPOSTER);
+        NamespacedKey key = new NamespacedKey(this.bingo, "composter");
+        ShapedRecipe recipe = new ShapedRecipe(key, item);
+        recipe.shape("w w", "w w", "www");
+        recipe.setIngredient('w', Material.DARK_OAK_SLAB);
+        return recipe;
+    }
+
+    public ShapedRecipe composterAcacia() {
+        ItemStack item = new ItemStack(Material.COMPOSTER);
+        NamespacedKey key = new NamespacedKey(this.bingo, "composter");
+        ShapedRecipe recipe = new ShapedRecipe(key, item);
+        recipe.shape("w w", "w w", "www");
+        recipe.setIngredient('w', Material.ACACIA_SLAB);
         return recipe;
     }
 }
