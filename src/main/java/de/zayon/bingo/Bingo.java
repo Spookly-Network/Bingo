@@ -25,6 +25,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameRule;
 import org.bukkit.WorldCreator;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -55,6 +56,7 @@ public class Bingo extends JavaPlugin {
     @Getter private PlayerQuitListener playerQuitListener;
     @Getter private ServerPingListener serverPingListener;
     @Getter private WeatherChangeListener weatherChangeListener;
+    @Getter private EntityDeathListener entityDeathListener;
     @Getter private BasicInventory basicInventory;
     @Getter private BuildListener buildListener;
 
@@ -94,6 +96,7 @@ public class Bingo extends JavaPlugin {
         this.playerLoginListener = new PlayerLoginListener(this);
         this.playerQuitListener = new PlayerQuitListener(this);
         this.serverPingListener = new ServerPingListener(this);
+        this.entityDeathListener = new EntityDeathListener(this);
         this.weatherChangeListener = new WeatherChangeListener(this);
         this.buildListener = new BuildListener(this);
         this.basicInventory = new BasicInventory(this);
@@ -121,6 +124,7 @@ public class Bingo extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(this.weatherChangeListener, this);
         Bukkit.getPluginManager().registerEvents(this.buildListener, this);
         Bukkit.getPluginManager().registerEvents(this.basicInventory, this);
+        Bukkit.getPluginManager().registerEvents(this.entityDeathListener, this);
         getCommand("bingo").setExecutor(this.bingoCommand);
         getCommand("start").setExecutor(this.startCommand);
 

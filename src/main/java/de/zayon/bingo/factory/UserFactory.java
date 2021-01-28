@@ -22,6 +22,7 @@ public class UserFactory {
         table.append("`deaths` INT(11) NOT NULL, ");
         table.append("`games` INT(11) NOT NULL, ");
         table.append("`wins` INT(11) NOT NULL, ");
+        table.append("`brownSheeps` INT(11) NOT NULL, ");
         table.append("PRIMARY KEY (`id`)");
         this.bingo.getDatabaseLib().executeUpdateAsync("CREATE TABLE IF NOT EXISTS zayon_bingo_stats (" + table.toString() + ")", resultSet -> {});
     }
@@ -59,6 +60,10 @@ public class UserFactory {
 
     public int getGames(Player player) {
         return (Integer) this.bingo.getDatabaseLib().get("SELECT games FROM zayon_bingo_stats WHERE uuid = ?", player.getUniqueId().toString(), "games");
+    }
+
+    public int getBrownSheeps(Player player) {
+        return (Integer) this.bingo.getDatabaseLib().get("SELECT brownSheeps FROM zayon_bingo_stats WHERE uuid = ?", player.getUniqueId().toString(), "games");
     }
 
     public void updateKills(Player player, UpdateType updateType, int kills) {
@@ -99,6 +104,16 @@ public class UserFactory {
             newGames = getGames(player) - games;
         }
         this.bingo.getDatabaseLib().executeUpdateAsync("UPDATE zayon_bingo_stats SET games = ? WHERE uuid = ?", resultSet -> {},newGames, player.getUniqueId().toString() );
+    }
+
+    public void updateBrownSheeps(Player player, UpdateType updateType, int sheeps) {
+        int brownSheep = 0;
+        if (updateType == UpdateType.ADD) {
+            brownSheep = getBrownSheeps(player) + sheeps;
+        } else if (updateType == UpdateType.REMOVE) {
+            brownSheep = getBrownSheeps(player) - sheeps;
+        }
+        this.bingo.getDatabaseLib().executeUpdateAsync("UPDATE zayon_bingo_stats SET brownSheeps = ? WHERE uuid = ?", resultSet -> {},brownSheep, player.getUniqueId().toString() );
     }
 
     public String getKDRatio(Player player) {
