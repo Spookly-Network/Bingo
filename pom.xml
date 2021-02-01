@@ -6,7 +6,7 @@
 
     <groupId>de.zayon</groupId>
     <artifactId>Bingo</artifactId>
-    <version>1.0-RC2</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
     <name>Bingo</name>
