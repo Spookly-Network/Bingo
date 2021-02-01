@@ -15,17 +15,16 @@ import de.zayon.bingo.listener.*;
 import de.zayon.bingo.manager.GroupManager;
 import de.zayon.bingo.manager.RecipeManager;
 import de.zayon.bingo.manager.ScoreboardManager;
+import de.zayon.bingo.manager.TopWallManager;
 import de.zayon.bingo.sidebar.SidebarCache;
 import de.zayon.zayonapi.TeamAPI.Team;
 import de.zayon.zayonapi.ZayonAPI;
 import de.zayon.zayonapi.util.DatabaseLib;
-import io.sentry.Sentry;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameRule;
 import org.bukkit.WorldCreator;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -34,47 +33,77 @@ import java.util.Arrays;
 
 public class Bingo extends JavaPlugin {
 
-    @Getter private static Bingo bingo;
-    @Getter private SpigotConfig generalConfig;
-    @Getter private SpigotConfig locationConfig;
-    @Getter private SidebarCache sidebarCache;
-    @Getter private ScoreboardManager scoreboardManager;
-    @Getter private GroupManager groupManager;
-    @Getter private DatabaseLib databaseLib;
-    @Getter private UserFactory userFactory;
+    @Getter
+    private static Bingo bingo;
+    @Getter
+    private SpigotConfig generalConfig;
+    @Getter
+    private SpigotConfig locationConfig;
+    @Getter
+    private SidebarCache sidebarCache;
+    @Getter
+    private ScoreboardManager scoreboardManager;
+    @Getter
+    private GroupManager groupManager;
+    @Getter
+    private DatabaseLib databaseLib;
+    @Getter
+    private UserFactory userFactory;
 
-    @Getter private RecipeManager recipeManager;
+    @Getter
+    private RecipeManager recipeManager;
+    @Getter
+    private TopWallManager topWallManager;
 
-    @Getter private AsyncPlayerChatListener asyncPlayerChatListener;
-    @Getter private DamageListener damageListener;
-    @Getter private FoodLevelChangeListener foodLevelChangeListener;
-    @Getter private PlayerDeathListener playerDeathListener;
-    @Getter private PlayerDropItemListener playerDropItemListener;
-    @Getter private PlayerInteractListener playerInteractListener;
-    @Getter private PlayerJoinListener playerJoinListener;
-    @Getter private PlayerLoginListener playerLoginListener;
-    @Getter private PlayerQuitListener playerQuitListener;
-    @Getter private ServerPingListener serverPingListener;
-    @Getter private WeatherChangeListener weatherChangeListener;
-    @Getter private EntityDeathListener entityDeathListener;
-    @Getter private BasicInventory basicInventory;
-    @Getter private BuildListener buildListener;
+    @Getter
+    private AsyncPlayerChatListener asyncPlayerChatListener;
+    @Getter
+    private DamageListener damageListener;
+    @Getter
+    private FoodLevelChangeListener foodLevelChangeListener;
+    @Getter
+    private PlayerDeathListener playerDeathListener;
+    @Getter
+    private PlayerDropItemListener playerDropItemListener;
+    @Getter
+    private PlayerInteractListener playerInteractListener;
+    @Getter
+    private PlayerJoinListener playerJoinListener;
+    @Getter
+    private PlayerLoginListener playerLoginListener;
+    @Getter
+    private PlayerQuitListener playerQuitListener;
+    @Getter
+    private ServerPingListener serverPingListener;
+    @Getter
+    private WeatherChangeListener weatherChangeListener;
+    @Getter
+    private EntityDeathListener entityDeathListener;
+    @Getter
+    private BasicInventory basicInventory;
+    @Getter
+    private BuildListener buildListener;
 
 
-    @Getter private BingoCommand bingoCommand;
-    @Getter private StartCommand startCommand;
+    @Getter
+    private BingoCommand bingoCommand;
+    @Getter
+    private StartCommand startCommand;
 
-    @Getter private EndingCoutdown endingCoutdown;
-    @Getter private IngameCountdown ingameCountdown;
-    @Getter private LobbyCountdown lobbyCountdown;
+    @Getter
+    private EndingCoutdown endingCoutdown;
+    @Getter
+    private IngameCountdown ingameCountdown;
+    @Getter
+    private LobbyCountdown lobbyCountdown;
 
 
     @Override
     public void onEnable() {
         bingo = this;
-        Sentry.init(options -> {
-            options.setDsn("https://5e51f97e5edd4dc8860034b847860e82@o508721.ingest.sentry.io/5601680");
-        });
+//        Sentry.init(options -> {
+//            options.setDsn("https://5e51f97e5edd4dc8860034b847860e82@o508721.ingest.sentry.io/5601680");
+//        });
 
         this.generalConfig = ConfigFactory.create(new File(getDataFolder(), "general_settings.yml"), SpigotConfig.class);
         this.locationConfig = ConfigFactory.create(new File(getDataFolder(), "location_settings.yml"), SpigotConfig.class);
@@ -85,6 +114,7 @@ public class Bingo extends JavaPlugin {
         this.databaseLib = ZayonAPI.getZayonAPI().getDatabaseLib();
         this.userFactory = new UserFactory(this);
         this.recipeManager = new RecipeManager(this);
+        this.topWallManager = new TopWallManager(this);
 
         this.asyncPlayerChatListener = new AsyncPlayerChatListener(this);
         this.damageListener = new DamageListener(this);
@@ -142,39 +172,42 @@ public class Bingo extends JavaPlugin {
         Bukkit.addRecipe(recipeManager.composterOak());
         // SET BINGO ITEMS IN GAMEDATA
         this.getLobbyCountdown().fillItemList();
+//        this.getTopWallManager().setWall();
+    }
 
-
+    @Override
+    public void onDisable() {
 
     }
 
     public static void loadTeams() {
-            ArrayList<ChatColor> colors = new ArrayList<ChatColor>(
-                    Arrays.asList(
-                            ChatColor.RED,
-                            ChatColor.BLUE,
-                            ChatColor.GREEN,
-                            ChatColor.YELLOW,
-                            ChatColor.LIGHT_PURPLE,
-                            ChatColor.AQUA,
-                            ChatColor.GOLD,
-                            ChatColor.DARK_AQUA,
-                            ChatColor.DARK_RED,
-                            ChatColor.DARK_BLUE,
-                            ChatColor.DARK_PURPLE));
+        ArrayList<ChatColor> colors = new ArrayList<ChatColor>(
+                Arrays.asList(
+                        ChatColor.RED,
+                        ChatColor.BLUE,
+                        ChatColor.GREEN,
+                        ChatColor.YELLOW,
+                        ChatColor.LIGHT_PURPLE,
+                        ChatColor.AQUA,
+                        ChatColor.GOLD,
+                        ChatColor.DARK_AQUA,
+                        ChatColor.DARK_RED,
+                        ChatColor.DARK_BLUE,
+                        ChatColor.DARK_PURPLE));
 
 
-            for (int i = 0; i < GameData.getTeamAmount(); i++) {
+        for (int i = 0; i < GameData.getTeamAmount(); i++) {
 
-                Team team = new Team();
-                PickList pickList = new PickList();
+            Team team = new Team();
+            PickList pickList = new PickList();
 
-                team.setMaxTeamSize(GameData.getTeamSize());
-                team.setTeamColor(colors.get(i));
-                team.setTeamName(colors.get(i) + "Team-" + (i + 1));
-                team.addToMemory("picklist", pickList);
-                ZayonAPI.getZayonAPI().getTeamAPI().addTeam(team);
+            team.setMaxTeamSize(GameData.getTeamSize());
+            team.setTeamColor(colors.get(i));
+            team.setTeamName(colors.get(i) + "Team-" + (i + 1));
+            team.addToMemory("picklist", pickList);
+            ZayonAPI.getZayonAPI().getTeamAPI().addTeam(team);
 
-            }
+        }
 
     }
 }

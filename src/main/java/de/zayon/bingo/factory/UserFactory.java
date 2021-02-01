@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 
 import java.sql.SQLException;
 import java.text.DecimalFormat;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class UserFactory {
@@ -42,7 +43,7 @@ public class UserFactory {
     public void createUser(Player player) {
         userExists(player).whenCompleteAsync((exist, throwable) -> {
             if (throwable == null && !exist.booleanValue())
-                this.bingo.getDatabaseLib().executeUpdateAsync("INSERT INTO zayon_bingo_stats (uuid, kills, deaths, games, wins) VALUES (?, ?, ?, ?, ?)", resultSet -> {}, player.getUniqueId().toString(), 0, 0, 0, 0);
+                this.bingo.getDatabaseLib().executeUpdateAsync("INSERT INTO zayon_bingo_stats (uuid, kills, deaths, games, wins, brownSheeps) VALUES (?, ?, ?, ?, ?, ?)", resultSet -> {}, player.getUniqueId().toString(), 0, 0, 0, 0, 0);
         });
     }
 
@@ -57,13 +58,21 @@ public class UserFactory {
     public int getWins(Player player) {
         return (Integer) this.bingo.getDatabaseLib().get("SELECT wins FROM zayon_bingo_stats WHERE uuid = ?", player.getUniqueId().toString(), "wins");
     }
+    public int getWins(UUID uuid) {
+        return (Integer) this.bingo.getDatabaseLib().get("SELECT wins FROM zayon_bingo_stats WHERE uuid = ?", uuid.toString(), "wins");
+    }
+
 
     public int getGames(Player player) {
         return (Integer) this.bingo.getDatabaseLib().get("SELECT games FROM zayon_bingo_stats WHERE uuid = ?", player.getUniqueId().toString(), "games");
     }
 
+    public int getGames(UUID uuid) {
+        return (Integer) this.bingo.getDatabaseLib().get("SELECT games FROM zayon_bingo_stats WHERE uuid = ?", uuid.toString(), "games");
+    }
+
     public int getBrownSheeps(Player player) {
-        return (Integer) this.bingo.getDatabaseLib().get("SELECT brownSheeps FROM zayon_bingo_stats WHERE uuid = ?", player.getUniqueId().toString(), "games");
+        return (Integer) this.bingo.getDatabaseLib().get("SELECT brownSheeps FROM zayon_bingo_stats WHERE uuid = ?", player.getUniqueId().toString(), "brownSheeps");
     }
 
     public void updateKills(Player player, UpdateType updateType, int kills) {
@@ -107,13 +116,13 @@ public class UserFactory {
     }
 
     public void updateBrownSheeps(Player player, UpdateType updateType, int sheeps) {
-        int brownSheep = 0;
+        int newSheeps = 0;
         if (updateType == UpdateType.ADD) {
-            brownSheep = getBrownSheeps(player) + sheeps;
+            newSheeps = getBrownSheeps(player) + sheeps;
         } else if (updateType == UpdateType.REMOVE) {
-            brownSheep = getBrownSheeps(player) - sheeps;
+            newSheeps = getBrownSheeps(player) - sheeps;
         }
-        this.bingo.getDatabaseLib().executeUpdateAsync("UPDATE zayon_bingo_stats SET brownSheeps = ? WHERE uuid = ?", resultSet -> {},brownSheep, player.getUniqueId().toString() );
+        this.bingo.getDatabaseLib().executeUpdateAsync("UPDATE zayon_bingo_stats SET brownSheeps = ? WHERE uuid = ?", resultSet -> {},newSheeps, player.getUniqueId().toString() );
     }
 
     public String getKDRatio(Player player) {

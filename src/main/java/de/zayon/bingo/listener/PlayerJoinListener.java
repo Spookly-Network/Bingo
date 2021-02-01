@@ -54,11 +54,13 @@ public class PlayerJoinListener implements Listener {
                 playerList.add(player);
                 GameData.setIngame(playerList);
 
-                if (player.hasPermission("bingo.start") || player.hasPermission("vip")) {
-                    player.getInventory().setItem(1, Items.createItem(Material.DIAMOND, "§7Starte das Spiel", 1));
-                }
-                if (Bukkit.getOnlinePlayers().size() == 2) {
+                if (Bukkit.getOnlinePlayers().size() == 3) {
                     LobbyCountdown.startLobbyCountdown(false);
+                }
+                if (Bukkit.getOnlinePlayers().size() == (GameData.getTeamAmount() * GameData.getTeamSize())/2) {
+                    if(LobbyCountdown.counter >= 60) {
+                        LobbyCountdown.counter = 60;
+                    }
                 }
                 for (Player all : Bukkit.getOnlinePlayers()) {
                     all.showPlayer(Bingo.getBingo(), player);

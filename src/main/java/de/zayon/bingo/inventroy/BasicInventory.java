@@ -24,5 +24,6 @@ public class BasicInventory implements Listener {
         if (e.getView().getTitle().contains("Diese Items musst du Sammeln")) {
             e.setCancelled(true);
         }
+        return;
     }
 }

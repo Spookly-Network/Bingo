@@ -18,7 +18,6 @@ import java.util.ArrayList;
 public class LobbyCountdown {
 
     private final Bingo bingo;
-
     public LobbyCountdown(Bingo bingo) {
         this.bingo = bingo;
     }
@@ -32,6 +31,7 @@ public class LobbyCountdown {
                 counter = 10;
             }
 
+//            Bingo.getBingo().getTopWallManager().setWall();
             scheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(Bingo.getBingo(), new Runnable() {
                 @Override
                 public void run() {
@@ -42,7 +42,7 @@ public class LobbyCountdown {
                             UtilFunctions.ActionBar(p, "§7Noch §f" + counter + " §7Sekunden...");
                         }
 
-                        if (counter == 15 || counter == 10) {
+                        if (counter == 60 || counter == 30 || counter == 15 || counter == 10) {
                             Bukkit.broadcastMessage(StringData.getPrefix() + "§7Das Spiel startet in " + StringData.getHighlightColor() + counter + " §7Sekunden!");
                             for (Player players : Bukkit.getOnlinePlayers()) {
 
@@ -76,7 +76,8 @@ public class LobbyCountdown {
                             }
                         } else if (counter == 0) {
 
-                            if (Bukkit.getOnlinePlayers().size() < 2) {
+                            //MIN ANZAHL AN SPIELERN
+                            if (Bukkit.getOnlinePlayers().size() < 3) {
                                 counter = 60;
                                 Bukkit.broadcastMessage(StringData.getPrefix() + "Es sind nicht genug Spieler Online. Der Countdown startet neu.");
                             } else {
