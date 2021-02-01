@@ -6,15 +6,15 @@ import de.zayon.bingo.countdowns.LobbyCountdown;
 import de.zayon.bingo.data.GameData;
 import de.zayon.bingo.data.GameState;
 import de.zayon.bingo.data.StringData;
-import de.zayon.bingo.data.TeamData;
+import de.zayon.zayonapi.TeamAPI.Team;
+import de.zayon.zayonapi.TeamAPI.TeamAPI;
+import de.zayon.zayonapi.ZayonAPI;
 import io.sentry.Sentry;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
-
-import java.util.ArrayList;
 
 public class PlayerQuitListener implements Listener {
 
@@ -37,11 +37,23 @@ public class PlayerQuitListener implements Listener {
                 }
             } else if (GameState.state == GameState.INGAME && GameData.getIngame().contains(player)) {
                 event.setQuitMessage(StringData.getPrefix() + StringData.getHighlightColor() + event.getPlayer().getName() + " §7hat das Spiel verlassen.");
-                if (GameData.getIngame().size() <= 2) {
-                    EndingCoutdown.teamWin(TeamData.getTeamCache().get(TeamData.getPlayerTeamCache().get(GameData.getIngame().get(0))));
+
+                Team team = GameData.getTeamCache().get(player);
+                team.removePlayer(player);
+                GameData.getTeamCache().remove(player);
+                if(team.getRegisteredPlayers().isEmpty()) {
+                    ZayonAPI.getZayonAPI().getTeamAPI().removeTeam(team);
+                }
+
+                if (ZayonAPI.getZayonAPI().getTeamAPI().getRegisteredTeams().size() == 1) {
+                    EndingCoutdown.teamWin(GameData.getTeamCache().get(GameData.getIngame().get(0)));
                 }
             } else {
                 event.setQuitMessage("");
+            }
+
+            if(GameData.getTeamCache().containsKey(player)) {
+                GameData.getTeamCache().get(player).removePlayer(player);
             }
         } catch (Exception e) {
             Sentry.captureException(e);

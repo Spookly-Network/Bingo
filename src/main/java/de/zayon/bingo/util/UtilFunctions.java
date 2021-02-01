@@ -1,5 +1,7 @@
 package de.zayon.bingo.util;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import de.zayon.bingo.data.GameData;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -39,5 +41,11 @@ public class UtilFunctions {
     public static Integer makeIntNegative(Integer value) {
         return 0-value;
     }
+
+    public static void debug(Object object) {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        System.out.println(gson.toJson(object));
+    }
+
 
 }
