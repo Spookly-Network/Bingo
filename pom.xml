@@ -131,7 +131,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.16.4-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>C:/Users/Niklas/Downloads/build/spigot-1.14.4.jar</systemPath>
         </dependency>
