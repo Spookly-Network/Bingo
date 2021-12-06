@@ -1,8 +1,8 @@
 name: Bingo
 version: ${project.version}
-main: de.zayon.bingo.Bingo
+main: de.nehlen.bingo.Bingo
 api-version: 1.13
-depend: [MCCommons, ZayonAPI]
+depend: [MCCommons, GameAPI]
 authors: [DasNiklas]
 commands:
   bingo:
