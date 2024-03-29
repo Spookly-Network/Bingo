@@ -6,5 +6,7 @@ public enum GameState {
 
     public static GameState state = LOBBY;
 
-    private GameState() {}
+    public GameState getState() {
+        return state;
+    }
 }

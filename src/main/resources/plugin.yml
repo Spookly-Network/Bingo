@@ -1,9 +1,23 @@
 name: Bingo
 version: ${project.version}
 main: de.nehlen.bingo.Bingo
-api-version: 1.13
-depend: [MCCommons, GameAPI]
-authors: [DasNiklas]
+api-version: 1.19
+depend: [ SpooklyCloudnetUtils, GameAPI, CloudNet-Bridge ]
+authors: [ DasNiklas ]
 commands:
   bingo:
+    aliases:
+      - b
+      - bi
+      - items
+      - i
   start:
+    aliases:
+      - s
+  setspawn:
+  backpack:
+    aliases:
+      - bp
+  stats:
+    aliases:
+      - statistics

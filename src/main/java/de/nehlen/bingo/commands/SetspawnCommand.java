@@ -2,6 +2,7 @@ package de.nehlen.bingo.commands;
 
 import de.nehlen.bingo.Bingo;
 import de.nehlen.bingo.data.StringData;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,9 +20,14 @@ public class SetspawnCommand implements CommandExecutor {
         if (!(commandSender instanceof Player))
             return true;
         Player player = (Player)commandSender;
-        if (!player.hasPermission("permssion.name")) {
+        if (!player.hasPermission("spookly.admin")) {
             player.sendMessage(StringData.combinate());
             return true;
+        }
+        if (args.length == 2 && args[0].equals("tp")) {
+            Location location = Bukkit.getWorld(args[1]).getSpawnLocation();
+            player.teleport(location);
+            return false;
         }
         if (args.length == 0) {
             Location location = player.getLocation();

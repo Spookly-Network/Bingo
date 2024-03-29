@@ -20,7 +20,7 @@ public class PlayerDropItemListener implements Listener {
     public void handleItemDrop(PlayerDropItemEvent event) {
 
         Player player = event.getPlayer();
-        if(!GameData.getIngame().contains(player) || GameState.state == GameState.END) {
+        if(GameState.state == GameState.LOBBY || GameState.state == GameState.END) {
             event.setCancelled(true);
         }
     }

@@ -3,7 +3,10 @@ package de.nehlen.bingo.listener;
 import de.nehlen.bingo.Bingo;
 import de.nehlen.bingo.data.GameData;
 import de.nehlen.bingo.data.StringData;
+import de.nehlen.bingo.factory.UserFactory;
 import de.nehlen.gameapi.TeamAPI.Team;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,7 +25,9 @@ public class PlayerDeathListener implements Listener {
     public void handleDeath(PlayerDeathEvent event) {
 
         Player player = event.getEntity();
-        event.setDeathMessage(StringData.getPrefix() + StringData.getHighlightColor() + player.getName() + " §7ist gestorben.");
+        bingo.getUserFactory().updateDeaths(player, UserFactory.UpdateType.ADD, 1);
+        event.deathMessage(StringData.getPrefix().append(player.name().color(StringData.getHighlightColor()))
+                .append(Component.text(" ist gestorben.").color(NamedTextColor.GRAY)));
 
     }
 
@@ -30,6 +35,8 @@ public class PlayerDeathListener implements Listener {
     public void handleRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         Team team = GameData.getTeamCache().get(player);
-        event.setRespawnLocation((Location) team.getMemory().get("spawnLoc"));
+        if(player.getBedSpawnLocation() == null) {
+            event.setRespawnLocation((Location) team.memory().get("spawnLoc"));
+        }
     }
 }

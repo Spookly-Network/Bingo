@@ -1,9 +1,11 @@
 package de.nehlen.bingo.sidebar;
 
+import net.kyori.adventure.text.Component;
+
 import java.util.List;
 
 public interface SidebarPage {
-    String getDisplayName();
+    Component getDisplayName();
 
-    List<String> getLines();
+    List<Component> getLines();
 }

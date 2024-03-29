@@ -1,5 +1,6 @@
 package de.nehlen.bingo.sidebar;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.ChatColor;
 import org.bukkit.scoreboard.Team;
 
@@ -12,7 +13,7 @@ final class SidebarLine {
 
     private final ChatColor color;
 
-    private String text;
+    private Component text;
 
     SidebarLine(int index, Team team, String entry, ChatColor color) {
         this.index = index;
@@ -25,7 +26,7 @@ final class SidebarLine {
         return this.index;
     }
 
-    public String getText() {
+    public Component getText() {
         return this.text;
     }
 
@@ -41,7 +42,7 @@ final class SidebarLine {
         return this.team;
     }
 
-    public void setText(String text) {
+    public void setText(Component text) {
         this.text = text;
     }
 }

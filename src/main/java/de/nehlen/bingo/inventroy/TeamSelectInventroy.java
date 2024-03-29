@@ -1,70 +1,85 @@
 package de.nehlen.bingo.inventroy;
 
-import de.exceptionflug.mccommons.config.shared.ConfigFactory;
-import de.exceptionflug.mccommons.config.shared.ConfigWrapper;
-import de.exceptionflug.mccommons.config.spigot.SpigotConfig;
-import de.exceptionflug.mccommons.inventories.api.Arguments;
-import de.exceptionflug.mccommons.inventories.api.CallResult;
-import de.exceptionflug.mccommons.inventories.api.InventoryType;
-import de.exceptionflug.mccommons.inventories.spigot.design.SpigotOnePageInventoryWrapper;
 import de.nehlen.bingo.Bingo;
 import de.nehlen.bingo.data.GameData;
 import de.nehlen.bingo.data.StringData;
+import de.nehlen.bingo.util.Items;
 import de.nehlen.gameapi.Gameapi;
-import de.nehlen.gameapi.ItemsAPI.Items;
 import de.nehlen.gameapi.TeamAPI.Team;
+import de.nehlen.spooklycloudnetutils.manager.GroupManager;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
-public class TeamSelectInventroy extends SpigotOnePageInventoryWrapper {
+public class TeamSelectInventroy implements Listener {
 
-    private static final ConfigWrapper CONFIG_WRAPPER = ConfigFactory.create(Bingo.getBingo().getDescription().getName() + "/inventories", TeamSelectInventroy.class, SpigotConfig.class);
+    private final Bingo bingo;
+    private Gameapi gameapi;
 
-    public TeamSelectInventroy(Player player) {
-        super(player, CONFIG_WRAPPER);
-        setInventoryType(InventoryType.getChestInventoryWithRows((int)Math.min(1, Math.ceil(GameData.getTeamAmount() / 9))));
-        setTitle("§7Teamauswahl");
+    public TeamSelectInventroy(Bingo bingo) {
+        this.bingo = bingo;
+        this.gameapi = Gameapi.getGameapi();
+    }
 
-        for (Team t : Gameapi.getGameapi().getTeamAPI().getRegisteredTeams()) {
+    public Inventory getInventory(Player player) {
+        Inventory inventory = Bukkit.createInventory(null, getInventorySize(), Component.text("Teamauswahl"));
+        for (Team t : Gameapi.getGameapi().getTeamAPI().registeredTeams()) {
             ArrayList<Object> argument = new ArrayList<>();
-            ArrayList<String> lore = new ArrayList<>();
+            ArrayList<Component> lore = new ArrayList<>();
 
-            lore.add(StringData.getHighlightColor() + t.size() + "§7/" + StringData.getHighlightColor() + t.getMaxTeamSize());
-            t.getRegisteredPlayers().forEach(teamPlayer -> {
-                lore.add("§7- " + teamPlayer.getDisplayName());
+            lore.add(Component.text(t.size()).decoration(TextDecoration.ITALIC, false).color(StringData.getHighlightColor())
+                    .append(Component.text("/").style(Style.style(NamedTextColor.GRAY)))
+                    .append(Component.text(t.maxTeamSize()).color(StringData.getHighlightColor())));
+            t.registeredPlayers().forEach(teamPlayer -> {
+                lore.add(Component.text("- ").style(Style.style(NamedTextColor.GRAY))
+                        .append(teamPlayer.displayName().decoration(TextDecoration.ITALIC, false)));
             });
 
-            if (t.getRegisteredPlayers().contains(player)) {
-                add(Items.createLore(Material.LIME_DYE, t.getTeamName(), lore, 1), "nothing");
-            } else if (t.size().equals(t.getMaxTeamSize())) {
-                add(Items.createLore(Material.RED_DYE, t.getTeamName(), lore, 1), "nothing");
+            if (t.registeredPlayers().contains(player)) {
+                inventory.addItem(Items.createLore(Material.LIME_DYE, t.teamName(), lore, 1));
+            } else if (t.size().equals(t.maxTeamSize())) {
+                inventory.addItem(Items.createLore(Material.RED_DYE, t.teamName(), lore, 1));
             } else {
                 argument.add(t);
-                add(Items.createLore(Material.LIGHT_GRAY_DYE, t.getTeamName(), lore, 1), "selectTeam", new Arguments(argument));
+                inventory.addItem(Items.createLore(Material.LIGHT_GRAY_DYE, t.teamName(), lore, 1));
             }
         }
+
+        return inventory;
     }
 
-    public void updateInventory() {
-        super.updateInventory();
+    private int getInventorySize() {
+        return (int) Math.min(1, Math.ceil((double) GameData.getTeamAmount() / 9)) * 9;
     }
 
-    public void registerActionHandlers() {
-        registerActionHandler("nothing", click -> {
-            return CallResult.DENY_GRABBING;
-        });
-        registerActionHandler("selectTeam", click -> {
-            Player player = getPlayer();
-            Team argument = click.getArguments().get(0);
+    @EventHandler
+    private void handleItemInteract(InventoryClickEvent event) {
+        if (!event.getView().title().contains(Component.text("Teamauswahl"))) return;
+        if (!event.getCurrentItem().getType().equals(Material.LIGHT_GRAY_DYE)) {
+            event.setCancelled(true);
+            return;
+        }
 
-            argument.addPlayer(player);
-            GameData.getTeamCache().put(player, argument);
-            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 0);
-            player.closeInventory();
-            return CallResult.DENY_GRABBING;
-        });
+        String itemname = event.getCurrentItem().getItemMeta().getDisplayName();
+        Player player = (Player) event.getWhoClicked();
+        Team team = gameapi.getTeamAPI().registeredTeams().stream().filter(t -> t.getTeamName().equals(itemname)).collect(Collectors.toList()).get(0);
+
+        team.addPlayer(player);
+        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 0);
+        event.setCancelled(true);
+        player.closeInventory();
     }
 }

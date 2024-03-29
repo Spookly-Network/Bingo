@@ -1,9 +1,11 @@
 package de.nehlen.bingo.commands;
 
 import de.nehlen.bingo.Bingo;
-import de.nehlen.bingo.countdowns.LobbyCountdown;
+import de.nehlen.bingo.data.GameData;
 import de.nehlen.bingo.data.GameState;
 import de.nehlen.bingo.data.StringData;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -26,10 +28,10 @@ public class StartCommand implements CommandExecutor {
             int startCount = 0;
 
 
-            if (player.hasPermission("bingo.start") || player.hasPermission("zayon.vip+")) {
+            if (player.hasPermission("bingo.start") || player.hasPermission("vip+")) {
                 startCount = 15;
             } else if (player.hasPermission("vip")) {
-                startCount = 60;
+                startCount = 30;
             } else {
                 player.sendMessage(StringData.getNoPerm());
                 return false;
@@ -37,20 +39,20 @@ public class StartCommand implements CommandExecutor {
 
 
             if (GameState.state == GameState.LOBBY) {
-                if (Bukkit.getOnlinePlayers().size() >= 2) {
-                    if (bingo.getLobbyCountdown().counter > startCount) {
-                        Bukkit.getScheduler().cancelTasks(this.bingo);
-                        this.bingo.getLobbyCountdown().startLobbyCountdown(false);
-                        LobbyCountdown.counter = startCount;
+                if (Bukkit.getOnlinePlayers().size() >= GameData.getMinPlayerToStartGame()) {
+                    if (bingo.getLobbyCountdown().getCounter() > startCount) {
+                        this.bingo.getLobbyCountdown().endPhase();
+                        this.bingo.getLobbyCountdown().startPhase();
+                        this.bingo.getLobbyCountdown().setCounter(startCount);
                     } else {
-                        player.sendMessage(StringData.getPrefix() + "§7Das Spiel ist bereits gestartet!");
+                        player.sendMessage(StringData.getPrefix().append(Component.text("Das Spiel ist bereits gestartet!").color(NamedTextColor.GRAY)));
                     }
 
                 } else {
-                    player.sendMessage(StringData.getPrefix() + "§7Es sind nicht genügen Spieler Online!");
+                    player.sendMessage(StringData.getPrefix().append(Component.text("Es sind nicht genügen Spieler Online!")));
                 }
             } else {
-                player.sendMessage(StringData.getPrefix() + "§7Das Spiel hat bereits gestartet!");
+                player.sendMessage(StringData.getPrefix().append(Component.text("Das Spiel hat bereits gestartet!")));
             }
 
         } else {
