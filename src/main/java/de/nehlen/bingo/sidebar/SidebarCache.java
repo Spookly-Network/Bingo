@@ -1,5 +1,6 @@
 package de.nehlen.bingo.sidebar;
 
+import net.kyori.adventure.text.Component;
 import org.bukkit.entity.Player;
 
 import java.util.HashMap;
@@ -11,7 +12,7 @@ public class SidebarCache {
 
     public static Sidebar getCachedSidebar(Player player, String defaultObjectiveName) {
         if (!sidebarCache.containsKey(player)) {
-            Sidebar sidebar = new Sidebar(player, defaultObjectiveName, "board");
+            Sidebar sidebar = new Sidebar(player, defaultObjectiveName, Component.text("board"));
             sidebarCache.put(player, sidebar);
             sidebar.display(player);
         }

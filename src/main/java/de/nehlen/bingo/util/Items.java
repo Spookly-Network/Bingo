@@ -1,5 +1,9 @@
 package de.nehlen.bingo.util;
 
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -9,115 +13,47 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
+import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.map.MapView;
 
 import java.util.ArrayList;
 import java.util.UUID;
 
 public class Items {
-    public static ItemStack createItem(Material material, String displayname, int amount) {
-
+    public static ItemStack createItem(Material material, Component displayName, int amount) {
         ItemStack item = new ItemStack(material, amount);
         ItemMeta mitem = item.getItemMeta();
-        mitem.setDisplayName(displayname);
-        item.setItemMeta(mitem);
-
-        return item;
-    }
-
-    public static ItemStack createShoes(String displayname, Color color) {
-        ItemStack i = new ItemStack(Material.LEATHER_BOOTS, 1);
-        LeatherArmorMeta im = (LeatherArmorMeta)i.getItemMeta();
-        im.setDisplayName(displayname);
-        im.setColor(color);
-        i.setItemMeta((ItemMeta)im);
-        return i;
-    }
-
-    public static ItemStack createHelm(String displayname, Color color) {
-        ItemStack i = new ItemStack(Material.LEATHER_HELMET, 1);
-        LeatherArmorMeta im = (LeatherArmorMeta)i.getItemMeta();
-        im.setDisplayName(displayname);
-        im.setColor(color);
-        i.setItemMeta((ItemMeta)im);
-        return i;
-    }
-
-    public static ItemStack createItemEnch1(Material material, int subid, String displayname, Enchantment enchantment) {
-        ItemStack itemE = new ItemStack(material, 1);
-        ItemMeta testEnchantMeta = itemE.getItemMeta();
-        testEnchantMeta.addEnchant(enchantment, 1, true);
-        testEnchantMeta.setDisplayName(displayname);
-        itemE.setItemMeta(testEnchantMeta);
-        return itemE;
-    }
-
-    public static ItemStack createItemEnch2(Material material, int subid, String displayname, Enchantment enchantment) {
-        ItemStack itemE2 = new ItemStack(material, 1);
-        ItemMeta testEnchantMeta = itemE2.getItemMeta();
-        testEnchantMeta.addEnchant(enchantment, 2, true);
-        testEnchantMeta.setDisplayName(displayname);
-        itemE2.setItemMeta(testEnchantMeta);
-        return itemE2;
-    }
-
-    public static ItemStack createItemEnch4(Material material, int subid, String displayname, Enchantment enchantment) {
-        ItemStack itemE2 = new ItemStack(material, 1);
-        ItemMeta testEnchantMeta = itemE2.getItemMeta();
-        testEnchantMeta.addEnchant(enchantment, 4, true);
-        testEnchantMeta.setDisplayName(displayname);
-        itemE2.setItemMeta(testEnchantMeta);
-        return itemE2;
-    }
-
-    public static ItemStack createItemLore(Material material, int subid, String displayname, String lore) {
-        ItemStack item = new ItemStack(material, 1);
-        ItemMeta mitem = item.getItemMeta();
-        ArrayList<String> Lore = new ArrayList<>();
-        mitem.setLore(Lore);
-        mitem.addItemFlags(new ItemFlag[] { ItemFlag.HIDE_UNBREAKABLE });
-        mitem.setUnbreakable(true);
-        mitem.setDisplayName(displayname);
+        mitem.displayName(displayName.decoration(TextDecoration.ITALIC, false));
         item.setItemMeta(mitem);
         return item;
     }
-
-    public static ItemStack createItemA(Material material, int subid, String displayname, int anzahl) {
-        ItemStack item = new ItemStack(material, anzahl);
-        ItemMeta mitem = item.getItemMeta();
-        mitem.setDisplayName(displayname);
-        mitem.addItemFlags(new ItemFlag[] { ItemFlag.HIDE_UNBREAKABLE });
-        mitem.setUnbreakable(true);
-        item.setItemMeta(mitem);
+    public static ItemStack createItem(Material material, int amount) {
+        ItemStack item = new ItemStack(material, amount);
         return item;
     }
 
-    /**
-     * @param Display
-     * @param Owner
-     * @return
-     */
-    public static ItemStack createSkull(String Display, String Owner) {
-        ItemStack stack = new ItemStack(Material.PLAYER_HEAD, 1);
-        SkullMeta metas = (SkullMeta) Bukkit.getItemFactory().getItemMeta(Material.PLAYER_HEAD);
-
-        OfflinePlayer op =  Bukkit.getOfflinePlayer(UUIDFetcher.getUUID(Owner));
-        metas.setOwningPlayer(op);
-
-        metas.setDisplayName(Display);
-        stack.setItemMeta(metas);
-        return stack;
+    public static ItemStack createLore(Material material, Component displayname, ArrayList<Component> lore, int amount) {
+        ItemStack item = new ItemStack(material, amount);
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.lore(lore);
+        itemMeta.displayName(displayname.decoration(TextDecoration.ITALIC, false));
+        item.setItemMeta(itemMeta);
+        return item;
     }
 
-    public static ItemStack createSkullByUUID(String Display, String uuid) {
-        ItemStack stack = new ItemStack(Material.PLAYER_HEAD, 1);
-        SkullMeta metas = (SkullMeta) Bukkit.getItemFactory().getItemMeta(Material.PLAYER_HEAD);
+    public static ItemStack getCustomSkull(String url, Component name, Integer amount) {
 
-        OfflinePlayer op =  Bukkit.getOfflinePlayer(UUID.fromString(uuid));
-        metas.setOwningPlayer(op);
+        ItemStack head = new ItemStack(Material.PLAYER_HEAD, amount);
+        SkullMeta skullMeta = (SkullMeta) head.getItemMeta();
+        skullMeta.displayName(name);
 
-        metas.setDisplayName(Display);
-        stack.setItemMeta(metas);
-        return stack;
+        if (url.isEmpty()) return head;
+        PlayerProfile profile = Bukkit.createProfile(UUID.randomUUID());
+        profile.getProperties().add(new ProfileProperty("textures", url));
+        skullMeta.setPlayerProfile(profile);
+
+        head.setItemMeta(skullMeta);
+        return head;
     }
 }

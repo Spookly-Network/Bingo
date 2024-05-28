@@ -1,38 +1,81 @@
 package de.nehlen.bingo.data.helper;
 
+import de.nehlen.bingo.Bingo;
+import de.nehlen.bingo.data.GameData;
+import de.nehlen.bingo.data.StringData;
+import de.nehlen.bingo.factory.UserFactory;
+import de.nehlen.spookly.Spookly;
+import de.nehlen.spookly.player.SpooklyPlayer;
+import de.nehlen.spookly.team.Team;
 import lombok.Getter;
-import lombok.Setter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PickList {
 
-    @Getter @Setter private Boolean it0 = false;
-    @Getter @Setter private Boolean it1 = false;
-    @Getter @Setter private Boolean it2 = false;
-    @Getter @Setter private Boolean it3 = false;
-    @Getter @Setter private Boolean it4 = false;
-    @Getter @Setter private Boolean it5 = false;
-    @Getter @Setter private Boolean it6 = false;
-    @Getter @Setter private Boolean it7 = false;
-    @Getter @Setter private Boolean it8 = false;
+    @Getter
+    private List<Material> items;
 
-    public PickList() {
-        this.it0 = false;
-        this.it1 = false;
-        this.it2 = false;
-        this.it3 = false;
-        this.it4 = false;
-        this.it5 = false;
-        this.it6 = false;
-        this.it7 = false;
-        this.it8 = false;
+    public PickList(List<Material> items) {
+        this.items = new ArrayList<>(items);
     }
 
-    public Boolean check() {
-        if(it1 && it2 && it3 && it4 && it5 && it6 && it7 && it8 && it0) {
-            return true;
+    public void completeMaterial(Player player, Team team, Material material) {
+        SpooklyPlayer spooklyPlayer = Spookly.getPlayer(player);
+
+        if (!GameData.firstItemFound) {
+            spooklyPlayer.addPoints(20);
+            player.sendMessage(TextComponentHelper.addPointsComponent(20));
+            player.sendMessage(StringData.getPrefix()
+                    .append(Component.text("Du hast den ").color(NamedTextColor.GRAY)
+                            .append(Component.text("ersten Gegenstand").color(StringData.getHighlightColor()))
+                            .append(Component.text(" der Runde gefunden.").color(NamedTextColor.GRAY))));
+            GameData.firstItemFound=true;
         }
 
-        return false;
+        spooklyPlayer.addPoints(20);
+        player.sendMessage(TextComponentHelper.addPointsComponent(20));
+        Bingo.getBingo().getUserFactory().updateCraftedItems(player, UserFactory.UpdateType.ADD, 1);
+        items.remove(material);
+
+        Bukkit.broadcast(StringData.getPrefix()
+                .append(Component.translatable("phase.ingame.itemFound",
+                        spooklyPlayer.nameTag(),
+                        Component.translatable(TranslatableHelper.getTranslationKey(material)).color(StringData.getHighlightColor()),
+                        Component.text(getAmountCompleted()),
+                        Component.text(GameData.getItemsAmount())
+                        ).color(NamedTextColor.GRAY)));
+        if (isComplete()) {
+            Bingo.getBingo().getIngameCountdown().endPhase();
+            Bingo.getBingo().getEndingCoutdown().teamWin(team);
+        }
+    }
+
+    public Integer materialsLeft() {
+        return items.size();
+    }
+
+    public Integer getAmountCompleted() {
+        return GameData.getItemsToFind().size() - items.size();
+    }
+
+    public Boolean isComplete() {
+        return items.isEmpty();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        items.forEach(material -> {
+            stringBuilder.append(material.toString() + ",");
+        });
+        return "PickList[" + stringBuilder.toString() + "]";
     }
 
 }
