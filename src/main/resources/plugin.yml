@@ -1,9 +1,9 @@
 name: Bingo
 version: ${project.version}
 main: de.nehlen.bingo.Bingo
-api-version: 1.19
-depend: [ SpooklyCloudnetUtils, GameAPI, CloudNet-Bridge ]
-authors: [ DasNiklas ]
+api-version: 1.20
+depend: [ SpooklyCloudnetUtils, Spookly-Core ]
+authors: [ NEhlen ]
 commands:
   bingo:
     aliases:
@@ -21,3 +21,5 @@ commands:
   stats:
     aliases:
       - statistics
+  hud:
+  reroll:

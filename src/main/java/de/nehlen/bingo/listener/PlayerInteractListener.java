@@ -1,9 +1,13 @@
 package de.nehlen.bingo.listener;
 
 import de.nehlen.bingo.Bingo;
+import de.nehlen.bingo.data.GameData;
 import de.nehlen.bingo.data.GameState;
 import de.nehlen.bingo.inventroy.BingoListInventory;
-import de.nehlen.spooklycloudnetutils.SenderUtil;
+import de.nehlen.bingo.inventroy.SpectatorInventory;
+import de.nehlen.bingo.inventroy.TeamSelectInventory;
+import de.nehlen.bingo.util.UtilFunctions;
+import de.nehlen.spooklycloudnetutils.helper.CloudPlayerHelper;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -24,11 +28,6 @@ public class PlayerInteractListener implements Listener {
     public void handleInteract(PlayerInteractEvent event) {
         try {
             Player player = event.getPlayer();
-            if (GameState.state != GameState.INGAME) {
-                if (event.getMaterial().equals(Material.WRITTEN_BOOK)) return;
-                event.setCancelled(true);
-            }
-
             if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK) || event.getAction().equals(Action.RIGHT_CLICK_AIR)) {
                 if (GameState.state == GameState.LOBBY || GameState.state == GameState.END) {
                     ItemStack itemStack = player.getInventory().getItemInMainHand();
@@ -39,13 +38,18 @@ public class PlayerInteractListener implements Listener {
                             break;
                         }
                         case TOTEM_OF_UNDYING: {
-                            player.openInventory(bingo.getTeamSelectInventroy().getInventory(player));
+                            new TeamSelectInventory(UtilFunctions.getTeamInventorySize(), player).open();
                             break;
                         }
                         case HEART_OF_THE_SEA: {
-                            SenderUtil.sendPlayerToGroup(player, "Lobby");
+                            CloudPlayerHelper.sendPlayerToGroup(player, "Lobby");
                             break;
                         }
+                    }
+                } else {
+                    if (player.getInventory().getItemInMainHand().getType() == Material.COMPASS) {
+                        if (GameData.getIngame().contains(player)) return;
+                        new SpectatorInventory(player);
                     }
                 }
             }

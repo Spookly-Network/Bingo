@@ -1,26 +1,27 @@
 package de.nehlen.bingo.listener;
 
 import de.nehlen.bingo.data.GameData;
-import de.nehlen.bingo.data.StringData;
-import de.nehlen.gameapi.TeamAPI.PlayerJoinTeamEvent;
-import de.nehlen.gameapi.TeamAPI.PlayerQuitTeamEvent;
-import org.bukkit.entity.Player;
+import de.nehlen.spookly.Spookly;
+import de.nehlen.spookly.player.SpooklyPlayer;
+import de.nehlen.spookly.team.PlayerJoinTeamEvent;
+import de.nehlen.spookly.team.PlayerQuitTeamEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public class TeamListener implements Listener {
 
-    @EventHandler
-    public void handleTeamJoin(PlayerJoinTeamEvent event) {
-        Player player = event.getPlayer();
-        event.getPlayer().playerListName(StringData.playerListName(player));
-        GameData.getTeamCache().put(event.getPlayer(), event.getTeam());
-    }
+    public TeamListener() {
+        Spookly.getServer().getEventExecuter().register(PlayerJoinTeamEvent.class, event -> {
+            SpooklyPlayer player = event.getSpooklyPlayer();
+            GameData.getTeamCache().put(event.getSpooklyPlayer().toPlayer(), event.getTeam());
+            if(GameData.getTeamSize() > 1)
+                player.prefix(event.getTeam().prefix(), (event.getTeam().tabSortId()+20));
+        });
 
-    @EventHandler
-    public void handleTeamQuit(PlayerQuitTeamEvent event) {
-        Player player = event.getPlayer();
-        event.getPlayer().playerListName(StringData.playerListName(player));
-        GameData.getTeamCache().remove(event.getPlayer());
+        Spookly.getServer().getEventExecuter().register(PlayerQuitTeamEvent.class, event -> {
+            SpooklyPlayer player = event.getSpooklyPlayer();
+            GameData.getTeamCache().remove(event.getSpooklyPlayer().toPlayer());
+            player.resetNameTag();
+        });
     }
 }

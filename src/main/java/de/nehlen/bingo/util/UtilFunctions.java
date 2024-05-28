@@ -50,5 +50,7 @@ public class UtilFunctions {
         return time;
     }
 
-
+    public static int getTeamInventorySize() {
+        return (int)Math.min(1, Math.ceil((double) GameData.getTeamAmount() / 9));
+    }
 }

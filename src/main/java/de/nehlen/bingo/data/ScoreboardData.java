@@ -3,32 +3,32 @@ package de.nehlen.bingo.data;
 
 import de.nehlen.bingo.sidebar.SidebarPage;
 import lombok.Getter;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.Style;
-import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
-import java.util.Arrays;
 import java.util.List;
 
+@Getter
 public enum ScoreboardData implements SidebarPage {
-    PAGE_1("§8| 1/2", List.of(
+//    decorate(TextDecoration.BOLD)
+    PAGE_1(List.of(
             Component.empty(),
-            Component.text("Team").color(NamedTextColor.AQUA).decorate(TextDecoration.BOLD),
+            title("bingo.data.scoreboard.team"),
             Component.text("%team%"),
             Component.empty(),
-            Component.text("Phase").color(NamedTextColor.AQUA).decorate(TextDecoration.BOLD),
+            title("bingo.data.scoreboard.phase"),
             Component.text("%gamestatus%"),
             Component.empty(),
-            Component.text("Zeit").color(NamedTextColor.AQUA).decorate(TextDecoration.BOLD),
+            title("bingo.data.scoreboard.time"),
             Component.text("%timer%"),
             Component.empty(),
             Component.empty(),
-            MiniMessage.miniMessage().deserialize("<gradient:#FFAA00:#FFFF55>spookly.de")
+            MiniMessage.miniMessage().deserialize("<gradient:#FF5555:#FFAA00>spookly.de")
     )),
-    PAGE_2("§8| 2/2", List.of(
+    PAGE_2(List.of(
             Component.empty(),
             Component.text("%item1%"),
             Component.text("%item2%"),
@@ -40,21 +40,19 @@ public enum ScoreboardData implements SidebarPage {
             Component.text("%item8%"),
             Component.text("%item9%"),
             Component.empty(),
-            MiniMessage.miniMessage().deserialize("<gradient:#FFAA00:#FFFF55>spookly.de")
+            MiniMessage.miniMessage().deserialize("<gradient:#FF5555:#FFAA00>spookly.de")
     ));
 
-    @Getter
     private final List<Component> lines;
 
-    private final String displayName;
-
-
-    ScoreboardData(String displayName, List<Component> lines) {
-        this.displayName = displayName;
+    ScoreboardData(List<Component> lines) {
         this.lines = lines;
     }
     public Component getDisplayName() {
-        return Component.text(StringData.getPrefix_text()).color(StringData.getPrefix_color()).decorate(TextDecoration.BOLD)
-                .append(Component.text(" " + displayName));
+        return Component.text(StringData.getScoreboardTitle()).font(Key.key("scoreboard"));
+    }
+
+    private static Component title(String key) {
+        return Component.translatable(key).color(StringData.getHighlightColor()).font(Key.key("small"));
     }
 }

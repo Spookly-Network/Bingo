@@ -4,7 +4,7 @@ import de.nehlen.bingo.Bingo;
 import de.nehlen.bingo.data.GameData;
 import de.nehlen.bingo.data.StringData;
 import de.nehlen.bingo.factory.UserFactory;
-import de.nehlen.gameapi.TeamAPI.Team;
+import de.nehlen.spookly.team.Team;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;

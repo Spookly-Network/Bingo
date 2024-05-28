@@ -3,9 +3,8 @@ package de.nehlen.bingo.phases;
 import de.nehlen.bingo.Bingo;
 import de.nehlen.bingo.data.GameData;
 import de.nehlen.bingo.data.StringData;
-import de.nehlen.bingo.util.UtilFunctions;
-import de.nehlen.gameapi.PhaseApi.AbstractGamePhase;
-import de.nehlen.gameapi.TeamAPI.Team;
+import de.nehlen.bingo.util.AbstractGamePhase;
+import de.nehlen.spookly.team.Team;
 import de.nehlen.spooklycloudnetutils.helper.CloudStateHelper;
 import de.nehlen.spooklycloudnetutils.helper.CloudWrapperHelper;
 import net.kyori.adventure.text.Component;
@@ -48,11 +47,11 @@ public class TeleportPhase extends AbstractGamePhase {
             }
             Player player = teleportQueue.get(0);
             Team team = GameData.getTeamCache().get(player);
-            Location loc = (Location) team.getMemory().get("spawnLoc");
+            Location loc = (Location) team.memory().get("spawnLoc");
             player.teleport(loc);
 
             Bukkit.getOnlinePlayers().forEach(p -> {
-                p.sendActionBar(Component.text("Du wirst teleportiert...").color(NamedTextColor.GRAY));
+                p.sendActionBar(Component.translatable("phase.teleport.teleporting").color(NamedTextColor.GRAY));
             });
             teleportQueue.remove(0);
         }, 0, 10);
@@ -71,10 +70,12 @@ public class TeleportPhase extends AbstractGamePhase {
         });
         CloudStateHelper.changeServiceMaxPlayers(GameData.getTeamAmount() * GameData.getTeamSize() + 20);
         CloudWrapperHelper.publishServiceInfoUpdate();
-        Bukkit.broadcast(StringData.getPrefix()
-                .append(Component.text("Das Spiel startet ").color(NamedTextColor.GRAY))
-                .append(Component.text("jetzt").color(StringData.getHighlightColor()))
-                .append(Component.text("!").color(NamedTextColor.GRAY)));
+        Bukkit.broadcast(
+                StringData.getPrefix()
+                        .append(Component.translatable("phase.teleport.starting",
+                                        Component.translatable("phase.teleport.now")
+                                                .color(StringData.getHighlightColor()))
+                                .color(NamedTextColor.GRAY)));
         Bukkit.getScheduler().cancelTask(this.scheduler);
     }
 }

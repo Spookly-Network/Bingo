@@ -17,9 +17,8 @@ public class TextComponentHelper {
 
     public static Component addPointsComponent(int amount) {
         return StringData.getPrefix()
-                .append(Component.text("Du hast ").color(NamedTextColor.GRAY))
-                .append(Component.text(amount).color(NamedTextColor.RED))
-                .append(Component.text(" Punkte erhalten.").color(NamedTextColor.GRAY));
+                .append(Component.translatable("general.points.add",
+                        Component.text(amount).color(NamedTextColor.RED)).color(NamedTextColor.GRAY));
     }
 
     public static Component seperator() {

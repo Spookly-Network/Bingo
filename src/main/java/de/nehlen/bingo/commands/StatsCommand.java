@@ -4,7 +4,6 @@ import de.nehlen.bingo.Bingo;
 import de.nehlen.bingo.data.StringData;
 import de.nehlen.bingo.data.helper.TextComponentHelper;
 import de.nehlen.bingo.factory.UserFactory;
-import de.nehlen.gameapi.util.DatabaseLib;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.command.Command;

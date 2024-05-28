@@ -28,9 +28,9 @@ public class StartCommand implements CommandExecutor {
             int startCount = 0;
 
 
-            if (player.hasPermission("bingo.start") || player.hasPermission("vip+")) {
+            if (player.hasPermission("bingo.command.start-plus")) {
                 startCount = 15;
-            } else if (player.hasPermission("vip")) {
+            } else if (player.hasPermission("bingo.command.start")) {
                 startCount = 30;
             } else {
                 player.sendMessage(StringData.getNoPerm());
@@ -40,10 +40,10 @@ public class StartCommand implements CommandExecutor {
 
             if (GameState.state == GameState.LOBBY) {
                 if (Bukkit.getOnlinePlayers().size() >= GameData.getMinPlayerToStartGame()) {
-                    if (bingo.getLobbyCountdown().getCounter() > startCount) {
-                        this.bingo.getLobbyCountdown().endPhase();
-                        this.bingo.getLobbyCountdown().startPhase();
-                        this.bingo.getLobbyCountdown().setCounter(startCount);
+                    if (bingo.getLobbyPhase().getCounter() > startCount) {
+                        this.bingo.getLobbyPhase().endPhase();
+                        this.bingo.getLobbyPhase().startPhase();
+                        this.bingo.getLobbyPhase().setCounter(startCount);
                     } else {
                         player.sendMessage(StringData.getPrefix().append(Component.text("Das Spiel ist bereits gestartet!").color(NamedTextColor.GRAY)));
                     }

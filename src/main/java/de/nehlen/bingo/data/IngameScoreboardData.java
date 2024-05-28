@@ -1,16 +1,13 @@
 package de.nehlen.bingo.data;
 
 import de.nehlen.bingo.sidebar.SidebarPage;
+import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 
-import java.util.Arrays;
 import java.util.List;
 
-public enum IngameScoreboardData  implements SidebarPage {
+public enum IngameScoreboardData implements SidebarPage {
     PAGE_1(List.of(
             Component.empty(),
             Component.text("%item1%"),
@@ -23,7 +20,7 @@ public enum IngameScoreboardData  implements SidebarPage {
             Component.text("%item8%"),
             Component.text("%item9%"),
             Component.empty(),
-            MiniMessage.miniMessage().deserialize("<gradient:#FFAA00:#FFFF55>spookly.de")
+            MiniMessage.miniMessage().deserialize("<gradient:#FF5555:#FFAA00>spookly.de")
 
     ));
 
@@ -34,7 +31,8 @@ public enum IngameScoreboardData  implements SidebarPage {
     }
 
     public Component getDisplayName() {
-        return Component.text(StringData.getPrefix_text()).color(StringData.getPrefix_color()).decorate(TextDecoration.BOLD);
+        return Component.text(StringData.getScoreboardTitle()).font(Key.key("scoreboard"));
+//        return Component.text(StringData.getPrefix_text()).color(StringData.getPrefix_color()).decorate(TextDecoration.BOLD);
     }
 
     public List<Component> getLines() {

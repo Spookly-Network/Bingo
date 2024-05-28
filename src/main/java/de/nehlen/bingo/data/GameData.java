@@ -1,7 +1,7 @@
 package de.nehlen.bingo.data;
 
 import de.nehlen.bingo.Bingo;
-import de.nehlen.gameapi.TeamAPI.Team;
+import de.nehlen.spookly.team.Team;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;
@@ -28,8 +28,11 @@ public class GameData {
     @Getter private static Integer playerSpawnSize = Bingo.getBingo().getGeneralConfig().getOrSetDefault("config.game.playerSpawnSize", 10000);
     @Getter private static Boolean activeNether = Bingo.getBingo().getGeneralConfig().getOrSetDefault("config.game.activeNether", true);
     @Getter private static Integer itemsAmount = Bingo.getBingo().getGeneralConfig().getOrSetDefault("config.game.itemsAmount", 9);
-    @Getter private static Integer minPlayerToStartGame = Math.toIntExact(Math.round(teamSize * 1.5));
+    @Getter private static String databaseTableName = Bingo.getBingo().getGeneralConfig().getOrSetDefault("config.database.tableName", "spookly_bingo_stats");
+        @Getter private static Integer minPlayerToStartGame = Math.toIntExact(Math.round(teamSize * 1.5));
+//    @Getter private static Integer minPlayerToStartGame = 2;
     public static boolean firstItemFound = false;
+
     public static Location getLobbyLocation() {
         World lobbyWorld = Bukkit.getWorld("lobby_bingo");
         return new Location(lobbyWorld, 4.5, 44, -71.5, 0, 0);
@@ -82,7 +85,7 @@ public class GameData {
                     Material.BIRCH_BOAT.toString(),
                     Material.CAULDRON.toString(),
                     Material.CLOCK.toString()
-                    )
+            )
     ));
 
     @Getter private static List<String> noSpawnBiomes = Bingo.getBingo().getGeneralConfig().getOrSetDefault("config.game.noSpawnBiomes", new ArrayList<String>(

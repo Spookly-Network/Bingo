@@ -3,7 +3,9 @@ package de.nehlen.bingo.manager;
 import com.destroystokyo.paper.profile.PlayerProfile;
 import com.destroystokyo.paper.profile.ProfileProperty;
 import de.nehlen.bingo.Bingo;
-import de.nehlen.gameapi.Gameapi;
+import de.nehlen.bingo.data.GameData;
+import de.nehlen.spookly.Spookly;
+import de.nehlen.spookly.player.SpooklyOfflinePlayer;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -36,7 +38,7 @@ public class TopWallManager {
         locations.add(new Location(Bukkit.getWorld("lobby_bingo"), 15, 45, -54));
         locations.add(new Location(Bukkit.getWorld("lobby_bingo"), 15, 45, -53));
 
-        this.bingo.getDatabaseLib().executeQueryAsync("SELECT * FROM spookly_bingo_stats ORDER BY wins DESC LIMIT 10", resultSet -> {
+        this.bingo.getDatabaseLib().executeQueryAsync("SELECT * FROM " + GameData.getDatabaseTableName() + " ORDER BY wins DESC LIMIT 10", resultSet -> {
             try {
                 int i = 0;
                 while (resultSet.next()) {
@@ -57,10 +59,10 @@ public class TopWallManager {
     private void processResult(String strUUID, Integer wins, Integer games, Integer place, Location location) {
         UUID uuid = UUID.fromString(strUUID);
         PlayerProfile playerProfile = Bukkit.createProfile(uuid);
-        Gameapi.getGameapi().getPlayerManager().playerProfile(uuid).whenCompleteAsync((res, throwable) -> {
-            playerProfile.getProperties().add(new ProfileProperty("textures", res.getPlayerTexture()));
-            updateStatsDisplay(location, playerProfile, res.getPlayerName(), place, wins, games);
-        });
+        SpooklyOfflinePlayer offlinePlayer = Spookly.getOfflinePlayer(uuid);
+
+        playerProfile.getProperties().add(new ProfileProperty("textures", offlinePlayer.textureUrl()));
+        updateStatsDisplay(location, playerProfile, offlinePlayer.name(), place, wins, games);
     }
 
     private void updateStatsDisplay(Location location, PlayerProfile playerProfile, String playerName, Integer place, Integer wins, Integer games) {

@@ -4,22 +4,20 @@ import de.nehlen.bingo.commands.*;
 import de.nehlen.bingo.data.GameData;
 import de.nehlen.bingo.data.helper.PickList;
 import de.nehlen.bingo.factory.UserFactory;
-import de.nehlen.bingo.inventroy.TeamSelectInventroy;
 import de.nehlen.bingo.listener.*;
 import de.nehlen.bingo.manager.ScoreboardManager;
 import de.nehlen.bingo.manager.TopWallManager;
 import de.nehlen.bingo.manager.WorldManager;
 import de.nehlen.bingo.phases.EndingCoutdown;
 import de.nehlen.bingo.phases.IngameCountdown;
-import de.nehlen.bingo.phases.LobbyCountdown;
+import de.nehlen.bingo.phases.LobbyPhase;
 import de.nehlen.bingo.phases.TeleportPhase;
 import de.nehlen.bingo.sidebar.SidebarCache;
-import de.nehlen.gameapi.Gameapi;
-import de.nehlen.gameapi.TeamAPI.BasicTeam;
-import de.nehlen.gameapi.TeamAPI.Team;
-import de.nehlen.gameapi.YamlConfiguration.SpigotConfigurationWrapper;
-import de.nehlen.gameapi.YamlConfiguration.YamlConfig;
-import de.nehlen.gameapi.util.DatabaseLib;
+import de.nehlen.bingo.util.fonts.TeamFont;
+import de.nehlen.spookly.Spookly;
+import de.nehlen.spookly.configuration.ConfigurationWrapper;
+import de.nehlen.spookly.database.Connection;
+import de.nehlen.spookly.plugin.SpooklyPlugin;
 import de.nehlen.spooklycloudnetutils.helper.CloudStateHelper;
 import de.nehlen.spooklycloudnetutils.helper.CloudWrapperHelper;
 import lombok.Getter;
@@ -28,22 +26,23 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.WorldCreator;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.ipvp.canvas.MenuFunctionListener;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
 
-public class Bingo extends JavaPlugin {
+public class Bingo extends SpooklyPlugin {
 
     @Getter private static Bingo bingo;
-    @Getter private SpigotConfigurationWrapper generalConfig;
-    @Getter private SpigotConfigurationWrapper locationConfig;
-    @Getter private SpigotConfigurationWrapper itemsConfig;
-    @Getter private SidebarCache sidebarCache;
+    @Getter private BingoRegistry bingoRegistry;
+    @Getter private ConfigurationWrapper generalConfig;
+    @Getter private ConfigurationWrapper locationConfig;
+    @Getter private ConfigurationWrapper itemsConfig;
     @Getter private ScoreboardManager scoreboardManager;
-    @Getter private DatabaseLib databaseLib;
+    @Getter private Connection databaseLib;
     @Getter private UserFactory userFactory;
 
     @Getter private WorldManager worldManager;
@@ -64,30 +63,33 @@ public class Bingo extends JavaPlugin {
     @Getter private BuildListener buildListener;
     @Getter private TeamListener teamListener;
     @Getter private ItemCheckListener itemCheckListener;
-    @Getter private TeamSelectInventroy teamSelectInventroy;
 
     @Getter private BingoCommand bingoCommand;
     @Getter private StartCommand startCommand;
     @Getter private BackpackCommand backpackCommand;
     @Getter private SetspawnCommand setspawnCommand;
     @Getter private StatsCommand statsCommand;
+    @Getter private RerollCommand rerollCommand;
 
-    @Getter private LobbyCountdown lobbyCountdown;
+    @Getter private LobbyPhase lobbyPhase;
     @Getter private TeleportPhase teleportPhase;
     @Getter private IngameCountdown ingameCountdown;
     @Getter private EndingCoutdown endingCoutdown;
 
+    @Override
+    public void load() {
+        bingo = this;
+    }
 
     @Override
-    public void onEnable() {
-        bingo = this;
-        this.generalConfig = new YamlConfig(new File(getDataFolder(), "general_settings.yml"));
-        this.locationConfig = new YamlConfig(new File(getDataFolder(), "location_settings.yml"));
-        this.itemsConfig = new YamlConfig(new File(getDataFolder(), "items_settings.yml"));
+    public void enable() {
+        this.bingoRegistry = new BingoRegistry(this);
+        this.generalConfig = Spookly.getServer().createConfiguration(new File(getDataFolder(), "general_settings.yml"));
+        this.locationConfig = Spookly.getServer().createConfiguration(new File(getDataFolder(), "location_settings.yml"));
+        this.itemsConfig = Spookly.getServer().createConfiguration(new File(getDataFolder(), "items_settings.yml"));
 
-        this.sidebarCache = new SidebarCache();
         this.scoreboardManager = new ScoreboardManager(this);
-        this.databaseLib = Gameapi.getGameapi().getDatabaseLib();
+        this.databaseLib = Spookly.getServer().getConnection();
         this.userFactory = new UserFactory(this);
         this.topWallManager = new TopWallManager(this);
         this.worldManager = new WorldManager(this);
@@ -107,9 +109,8 @@ public class Bingo extends JavaPlugin {
         this.buildListener = new BuildListener(this);
         this.itemCheckListener = new ItemCheckListener(this);
         this.teamListener = new TeamListener();
-        this.teamSelectInventroy = new TeamSelectInventroy(this);
 
-        this.lobbyCountdown = new LobbyCountdown(this);
+        this.lobbyPhase = new LobbyPhase(this);
         this.teleportPhase = new TeleportPhase(this);
         this.ingameCountdown = new IngameCountdown(this);
         this.endingCoutdown = new EndingCoutdown(this);
@@ -119,6 +120,7 @@ public class Bingo extends JavaPlugin {
         this.backpackCommand = new BackpackCommand(this);
         this.setspawnCommand = new SetspawnCommand(this);
         this.statsCommand = new StatsCommand(this);
+        this.rerollCommand = new RerollCommand();
 
         WorldCreator w = WorldCreator.name("lobby_bingo");
         Bukkit.createWorld(w);
@@ -126,71 +128,72 @@ public class Bingo extends JavaPlugin {
 
         this.userFactory.createTable();
         // SET BINGO ITEMS IN GAMEDATA
-        LobbyCountdown.fillItemList();
-        loadTeams();
+        LobbyPhase.fillItemList();
 
-        Bukkit.getPluginManager().registerEvents(new MenuFunctionListener(), this);
-        Bukkit.getPluginManager().registerEvents(this.asyncPlayerChatListener, this);
-        Bukkit.getPluginManager().registerEvents(this.damageListener, this);
-        Bukkit.getPluginManager().registerEvents(this.foodLevelChangeListener, this);
-        Bukkit.getPluginManager().registerEvents(this.playerDeathListener, this);
-        Bukkit.getPluginManager().registerEvents(this.playerDropItemListener, this);
-        Bukkit.getPluginManager().registerEvents(this.playerInteractListener, this);
-        Bukkit.getPluginManager().registerEvents(this.playerJoinListener, this);
-        Bukkit.getPluginManager().registerEvents(this.playerLoginListener, this);
-        Bukkit.getPluginManager().registerEvents(this.playerQuitListener, this);
-        Bukkit.getPluginManager().registerEvents(this.serverPingListener, this);
-        Bukkit.getPluginManager().registerEvents(this.weatherChangeListener, this);
-        Bukkit.getPluginManager().registerEvents(this.buildListener, this);
-        Bukkit.getPluginManager().registerEvents(this.entityDeathListener, this);
-        Bukkit.getPluginManager().registerEvents(this.itemCheckListener, this);
-        Bukkit.getPluginManager().registerEvents(this.teamSelectInventroy, this);
-        Bukkit.getPluginManager().registerEvents(this.teamListener, this);
-        getCommand("bingo").setExecutor(this.bingoCommand);
-        getCommand("start").setExecutor(this.startCommand);
-        getCommand("setspawn").setExecutor(this.setspawnCommand);
-        getCommand("backpack").setExecutor(this.backpackCommand);
-        getCommand("stats").setExecutor(this.statsCommand);
+        try {
+            loadTeams();
+        } catch (NoSuchFieldException e) {
+            Bukkit.getLogger().log(Level.SEVERE, "could not load Team because team prefix char was not present");
+            throw new RuntimeException(e);
+        } catch (IllegalAccessException e) {
+            Bukkit.getLogger().log(Level.SEVERE, "just no");
+            throw new RuntimeException(e);
+        }
+
+        registerEvent(new MenuFunctionListener());
+        registerEvent(this.asyncPlayerChatListener);
+        registerEvent(this.damageListener);
+        registerEvent(this.foodLevelChangeListener);
+        registerEvent(this.playerDeathListener);
+        registerEvent(this.playerDropItemListener);
+        registerEvent(this.playerInteractListener);
+        registerEvent(this.playerJoinListener);
+        registerEvent(this.playerLoginListener);
+        registerEvent(this.playerQuitListener);
+        registerEvent(this.serverPingListener);
+        registerEvent(this.weatherChangeListener);
+        registerEvent(this.buildListener);
+        registerEvent(this.entityDeathListener);
+        registerEvent(this.itemCheckListener);
+        registerEvent(this.teamListener);
+
+        registerCommand("reroll", this.rerollCommand);
+        registerCommandOnly("bingo", this.bingoCommand);
+        registerCommandOnly("start", this.startCommand);
+        registerCommandOnly("setspawn", this.setspawnCommand);
+        registerCommandOnly("backpack", this.backpackCommand);
+        registerCommandOnly("stats", this.statsCommand);
+        registerCommandOnly("hud", new hudCommand());
+//        registerCommandOnly("test", new TestCmd());
         this.worldManager.setWorldSettingsForLobbyWorlds(Objects.requireNonNull(Bukkit.getWorld("Lobby_Bingo")));
+
+        postStartup();
+    }
+
+    @Override
+    protected void disable() {
+
+    }
+
+    @Override
+    protected void postStartup() {
         this.getTopWallManager().setWall();
+        this.bingoRegistry.registerTranslatables();
 
         CloudStateHelper.changeServiceMotd(GameData.getTeamAmount() + "x" + GameData.getTeamSize());
         CloudStateHelper.changeServiceMaxPlayers(GameData.getTeamAmount() * GameData.getTeamSize());
         CloudWrapperHelper.publishServiceInfoUpdate();
     }
 
-    @Override
-    public void onDisable() {
 
-    }
-
-    public static void loadTeams() {
-        List<TextColor> colors = List.of(
-                        NamedTextColor.RED,
-                        NamedTextColor.BLUE,
-                        NamedTextColor.GREEN,
-                        NamedTextColor.YELLOW,
-                        NamedTextColor.LIGHT_PURPLE,
-                        NamedTextColor.AQUA,
-                        NamedTextColor.GOLD,
-                        NamedTextColor.DARK_AQUA,
-                        NamedTextColor.DARK_RED,
-                        NamedTextColor.DARK_BLUE,
-                        NamedTextColor.DARK_PURPLE);
-
+    public static void loadTeams() throws NoSuchFieldException, IllegalAccessException {
+        List<TextColor> teamColor = List.of(NamedTextColor.RED, TextColor.fromHexString("#448400"), TextColor.fromHexString("#00aeff"), TextColor.fromHexString("#ffb100"), NamedTextColor.LIGHT_PURPLE, TextColor.fromHexString("#ff5733"), TextColor.fromHexString("#009688"), TextColor.fromHexString("#9c27b0"), TextColor.fromHexString("#c62828"));
 
         for (int i = 0; i < GameData.getTeamAmount(); i++) {
+            Field field = TeamFont.class.getDeclaredField("TEAM_" + (i + 1));
+            PickList picklist = new PickList(GameData.getItemsToFind());
 
-            Team team = new BasicTeam();
-            PickList pickList = new PickList(GameData.getItemsToFind());
-            team.addToMemory("picklist", pickList);
-
-            team.maxTeamSize(GameData.getTeamSize());
-            team.teamColor(colors.get(i));
-            team.teamName(Component.text("Team-" + (i + 1)).color(colors.get(i)));
-            Gameapi.getGameapi().getTeamAPI().addTeam(team);
-
+            Spookly.getTeamManager().registerTeam(Spookly.buildTeam().teamColor(teamColor.get(i)).teamName(Component.text("Team-" + (i + 1)).color(teamColor.get(i))).maxTeamSize(GameData.getTeamSize()).prefix(Component.empty().append(Component.text((String) field.get(null)).font(TeamFont.KEY).color(NamedTextColor.WHITE)).append(Component.text(" "))).tabSortId((i + 1)).addToMemory("picklist", picklist).build());
         }
-
     }
 }

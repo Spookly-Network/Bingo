@@ -4,7 +4,7 @@ import de.nehlen.bingo.Bingo;
 import de.nehlen.bingo.data.GameData;
 import de.nehlen.bingo.data.GameState;
 import de.nehlen.bingo.data.StringData;
-import de.nehlen.gameapi.TeamAPI.Team;
+import de.nehlen.spookly.team.Team;
 import net.kyori.adventure.text.Component;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

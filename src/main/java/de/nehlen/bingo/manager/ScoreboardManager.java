@@ -1,6 +1,7 @@
 package de.nehlen.bingo.manager;
 
 import de.nehlen.bingo.Bingo;
+import de.nehlen.bingo.util.fonts.TeamFont;
 import de.nehlen.bingo.data.GameData;
 import de.nehlen.bingo.data.GameState;
 import de.nehlen.bingo.data.IngameScoreboardData;
@@ -10,13 +11,11 @@ import de.nehlen.bingo.data.helper.TranslatableHelper;
 import de.nehlen.bingo.sidebar.Sidebar;
 import de.nehlen.bingo.sidebar.SidebarCache;
 import de.nehlen.bingo.util.UtilFunctions;
-import de.nehlen.gameapi.TeamAPI.Team;
+import de.nehlen.spookly.team.Team;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
-import net.kyori.adventure.util.Index;
 import org.apache.commons.lang3.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -142,7 +141,7 @@ public class ScoreboardManager {
 
     public Component getTeam(Player player) {
         if (GameData.getTeamCache().containsKey(player)) {
-            return GameData.getTeamCache().get(player).teamName();
+            return GameData.getTeamCache().get(player).prefix().font(TeamFont.KEY);
         } else {
             return Component.text("Kein Team");
         }
