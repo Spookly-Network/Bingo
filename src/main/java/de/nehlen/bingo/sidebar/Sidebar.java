@@ -1,5 +1,6 @@
 package de.nehlen.bingo.sidebar;
 
+import io.papermc.paper.scoreboard.numbers.NumberFormat;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -36,6 +37,7 @@ public class Sidebar {
         this.objective = this.board.registerNewObjective(objectiveName, Criteria.DUMMY, displayName);
         this.objective.displayName(displayName);
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        this.objective.numberFormat(NumberFormat.blank());
         this.beginIndex = beginIndex;
     }
 
