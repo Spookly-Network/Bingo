@@ -44,9 +44,9 @@ public class PlayerJoinListener implements Listener {
             player.getInventory().setItem(8, Items.createItem(Material.HEART_OF_THE_SEA, Component.translatable("gamemode.general.lobby.backToLobby").color(NamedTextColor.GRAY), 1));
             if (GameData.getTeamSize() > 1) {
                 player.getInventory().setItem(0, Items.createItem(Material.TOTEM_OF_UNDYING, Component.translatable("gamemode.general.lobby.teamSelect").color(NamedTextColor.GRAY), 1));
-                player.getInventory().setItem(1, Items.createItem(Material.CHEST, Component.translatable("gamemode.bingo.lobby.items").color(NamedTextColor.GRAY), 1));
+                player.getInventory().setItem(1, Items.createItem(Material.MAP, Component.translatable("gamemode.bingo.lobby.items").color(NamedTextColor.GRAY), 1));
             } else {
-                player.getInventory().setItem(0, Items.createItem(Material.CHEST, Component.translatable("gamemode.bingo.lobby.items").color(NamedTextColor.GRAY), 1));
+                player.getInventory().setItem(0, Items.createItem(Material.MAP, Component.translatable("gamemode.bingo.lobby.items").color(NamedTextColor.GRAY), 1));
             }
 
             ArrayList<Player> playerList = GameData.getIngame();
@@ -83,7 +83,6 @@ public class PlayerJoinListener implements Listener {
 
     @EventHandler
     public void handleSpawn(PlayerSpawnLocationEvent event) {
-        Player player = event.getPlayer();
         Location location = GameData.getLobbyLocation();
         event.setSpawnLocation(location);
     }

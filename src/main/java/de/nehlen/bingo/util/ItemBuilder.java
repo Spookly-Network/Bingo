@@ -46,6 +46,13 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder customModelData(Integer data) {
+        ItemMeta meta = item.getItemMeta();
+        meta.setCustomModelData(data);
+        item.setItemMeta(meta);
+        return this;
+    }
+
     public ItemBuilder lore(Component... lore) {
         ItemMeta meta = item.getItemMeta();
         meta.lore(Arrays.stream(lore).collect(Collectors.toList()));

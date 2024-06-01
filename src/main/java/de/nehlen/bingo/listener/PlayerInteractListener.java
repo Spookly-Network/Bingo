@@ -32,9 +32,10 @@ public class PlayerInteractListener implements Listener {
                 if (GameState.state == GameState.LOBBY || GameState.state == GameState.END) {
                     ItemStack itemStack = player.getInventory().getItemInMainHand();
                     switch (itemStack.getType()) {
-                        case CHEST: {
+                        case MAP: {
                             new BingoListInventory(player).open();
-                            player.playSound(player, Sound.BLOCK_CHEST_OPEN, 1, 1);
+                            player.playSound(player, Sound.ITEM_BOOK_PAGE_TURN, 1, 1);
+                            event.setCancelled(true);
                             break;
                         }
                         case TOTEM_OF_UNDYING: {
