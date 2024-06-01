@@ -53,7 +53,7 @@ public class PickList {
                         ).color(NamedTextColor.GRAY)));
         if (isComplete()) {
             Bingo.getBingo().getIngameCountdown().endPhase();
-            Bingo.getBingo().getEndingCoutdown().teamWin(team);
+            Bingo.getBingo().getEndingPhase().teamWin(team);
         }
     }
 

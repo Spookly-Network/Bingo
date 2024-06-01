@@ -12,6 +12,8 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
+import org.bukkit.block.sign.Side;
+import org.bukkit.block.sign.SignSide;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -74,10 +76,12 @@ public class TopWallManager {
             skull.update();
 
             Sign sign = (Sign) location.add(0, -1, 0).getBlock().getState();
-            sign.line(0, Component.text("#" + (place + 1)));
-            sign.line(1, Component.text(playerName));
-            sign.line(2, Component.text("Wins: " + wins));
-            sign.line(3, Component.text("Ratio: " + wins + "/" + games));
+            SignSide side = sign.getSide(Side.FRONT);
+            side.line(0, Component.text("#" + (place + 1)));
+            side.line(1, Component.text(playerName));
+            side.line(2, Component.text("Wins: " + wins));
+            side.line(3, Component.text("Ratio: " + wins + "/" + games));
+            sign.setWaxed(true);
             sign.update();
         });
     }

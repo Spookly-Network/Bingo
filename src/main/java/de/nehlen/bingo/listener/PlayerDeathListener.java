@@ -35,7 +35,8 @@ public class PlayerDeathListener implements Listener {
     public void handleRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         Team team = GameData.getTeamCache().get(player);
-        if(player.getBedSpawnLocation() == null) {
+
+        if(player.getRespawnLocation() == null) {
             event.setRespawnLocation((Location) team.memory().get("spawnLoc"));
         }
     }

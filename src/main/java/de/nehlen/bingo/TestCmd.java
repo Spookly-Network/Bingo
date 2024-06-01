@@ -1,6 +1,5 @@
 package de.nehlen.bingo;
 
-import de.nehlen.bingo.Bingo;
 import de.nehlen.bingo.data.GameData;
 import de.nehlen.spookly.team.Team;
 import org.bukkit.command.Command;
@@ -13,7 +12,7 @@ public class TestCmd implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         Team team = GameData.getTeamCache().get((Player) sender);
-        Bingo.getBingo().getEndingCoutdown().teamWin(team);
+        Bingo.getBingo().getEndingPhase().teamWin(team);
         return false;
     }
 }

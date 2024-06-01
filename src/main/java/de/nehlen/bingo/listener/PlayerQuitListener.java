@@ -54,7 +54,7 @@ public class PlayerQuitListener implements Listener {
                 }
 
                 if (Spookly.getTeamManager().registeredTeams().size() == 1) {
-                    Bingo.getBingo().getEndingCoutdown().teamWin(Spookly.getTeamManager().registeredTeams().get(0));
+                    Bingo.getBingo().getEndingPhase().teamWin(Spookly.getTeamManager().registeredTeams().get(0));
                 }
             } else {
                 event.quitMessage(Component.empty());

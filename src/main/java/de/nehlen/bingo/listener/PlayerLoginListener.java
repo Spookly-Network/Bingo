@@ -5,6 +5,7 @@ import de.nehlen.bingo.data.GameState;
 import de.nehlen.bingo.data.StringData;
 import de.nehlen.spooklycloudnetutils.SenderUtil;
 import de.nehlen.spooklycloudnetutils.SpooklyCloudNetUtils;
+import de.nehlen.spooklycloudnetutils.helper.CloudPlayerHelper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -57,7 +58,7 @@ public class PlayerLoginListener implements Listener {
                 }
             } else if (GameState.state == GameState.END) {
                 event.getPlayer().sendMessage("§cDas Spiel startet derzeit neu.");
-                SenderUtil.sendPlayerToGroup(event.getPlayer(), "Lobby");
+                CloudPlayerHelper.sendPlayerToGroup(event.getPlayer(), "Lobby", CloudPlayerHelper.SelectorType.RANDOM);
             }
 //        } catch (Exception e) {
 //            Sentry.captureException(e);

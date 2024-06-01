@@ -1,10 +1,10 @@
 package de.nehlen.bingo.data.helper;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
 public class TranslatableHelper {
     public static String getTranslationKey(Material material) {
+        /* Old api use
         try {
             if (material.isItem()) {
                 return Bukkit.getUnsafe().getItemTranslationKey(material);
@@ -17,6 +17,7 @@ public class TranslatableHelper {
             } else {
                 return "item." + material.getKey().getNamespace() + "."+material.getKey().getKey();
             }
-        }
+        }*/
+        return material.translationKey();
     }
 }

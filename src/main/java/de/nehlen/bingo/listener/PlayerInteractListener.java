@@ -42,7 +42,7 @@ public class PlayerInteractListener implements Listener {
                             break;
                         }
                         case HEART_OF_THE_SEA: {
-                            CloudPlayerHelper.sendPlayerToGroup(player, "Lobby");
+                            CloudPlayerHelper.sendPlayerToGroup(player, "Lobby", CloudPlayerHelper.SelectorType.RANDOM);
                             break;
                         }
                     }

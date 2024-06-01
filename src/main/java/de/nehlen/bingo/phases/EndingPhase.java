@@ -15,7 +15,7 @@ import de.nehlen.bingo.util.playerheads.PlayerheadChatComponent;
 import de.nehlen.spookly.Spookly;
 import de.nehlen.spookly.player.SpooklyPlayer;
 import de.nehlen.spookly.team.Team;
-import de.nehlen.spooklycloudnetutils.SenderUtil;
+import de.nehlen.spooklycloudnetutils.helper.CloudPlayerHelper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
@@ -25,11 +25,11 @@ import org.bukkit.entity.Player;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class EndingCoutdown extends AbstractGamePhase {
+public class EndingPhase extends AbstractGamePhase {
 
     private final Bingo bingo;
 
-    public EndingCoutdown(Bingo bingo) {
+    public EndingPhase(Bingo bingo) {
         super(20);
         this.bingo = bingo;
     }
@@ -46,11 +46,11 @@ public class EndingCoutdown extends AbstractGamePhase {
                             Component.text("hat das Spiel gewonnen").color(NamedTextColor.GRAY),
                             Title.Times.times(Duration.ofSeconds(1), Duration.ofSeconds(3), Duration.ZERO)));
                 else
-                    player.showTitle(Title.title(team.registeredPlayers().get(0).displayName().color(StringData.getHighlightColor()),
+                    player.showTitle(Title.title(team.registeredPlayers().getFirst().displayName().color(StringData.getHighlightColor()),
                             Component.text("hat das Spiel gewonnen").color(NamedTextColor.GRAY),
                             Title.Times.times(Duration.ofSeconds(1), Duration.ofSeconds(3), Duration.ZERO)));
                 player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 100, 0);
-                player.spawnParticle(Particle.TOTEM, player.getLocation().add(0, 1, 0), 250);
+                player.spawnParticle(Particle.TOTEM_OF_UNDYING, player.getLocation().add(0, 1, 0), 250);
             }
         }
 
@@ -72,7 +72,7 @@ public class EndingCoutdown extends AbstractGamePhase {
             }
 
             if (team.maxTeamSize() <= 1) {
-                Player winner = team.registeredPlayers().get(0);
+                Player winner = team.registeredPlayers().getFirst();
                 SpooklyPlayer spooklyPlayer = Spookly.getPlayer(winner.getUniqueId());
 
                 winComponent.set(BigHeadMessage.getComponent(winner.getPlayer(), winner.displayName().color(StringData.getHighlightColor())
@@ -118,7 +118,7 @@ public class EndingCoutdown extends AbstractGamePhase {
             if (counter == 0) {
                 Bukkit.getScheduler().runTaskAsynchronously(Bingo.getBingo(), () -> {
                     for (final Player player : Bukkit.getOnlinePlayers()) {
-                        SenderUtil.sendPlayerToGroup(player, "Lobby");
+                        CloudPlayerHelper.sendPlayerToGroup(player, "Lobby", CloudPlayerHelper.SelectorType.RANDOM);
                     }
                 });
 

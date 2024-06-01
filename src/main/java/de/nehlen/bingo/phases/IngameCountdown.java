@@ -1,7 +1,6 @@
 package de.nehlen.bingo.phases;
 
 import de.nehlen.bingo.Bingo;
-import de.nehlen.bingo.bossbar.BossComponentHelper;
 import de.nehlen.bingo.commands.hudCommand;
 import de.nehlen.bingo.data.GameData;
 import de.nehlen.bingo.data.GameState;
@@ -13,7 +12,6 @@ import de.nehlen.bingo.util.UtilFunctions;
 import de.nehlen.spookly.Spookly;
 import de.nehlen.spookly.team.Team;
 import net.kyori.adventure.bossbar.BossBar;
-import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -87,7 +85,7 @@ public class IngameCountdown extends AbstractGamePhase {
                         .sorted(Map.Entry.comparingByValue())
                         .collect(Collectors.toList())
                         .get(0).getKey();
-                bingo.getEndingCoutdown().teamWin(winner);
+                bingo.getEndingPhase().teamWin(winner);
                 Bukkit.broadcast(StringData.getPrefix()
                         .append(Component.text("Die Spielzeit ist abgelaufen, das Team mit den meißten Items hat gewonnen.").color(NamedTextColor.GRAY)));
             }

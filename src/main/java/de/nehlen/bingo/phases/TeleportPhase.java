@@ -32,9 +32,9 @@ public class TeleportPhase extends AbstractGamePhase {
     public void startPhase() {
         Bukkit.getScheduler().runTask(bingo, () -> {
             Bukkit.getOnlinePlayers().forEach(player -> {
-                player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 1000000, 100, true));
-                player.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 1000000, 100, true));
-                player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP, 1000000, 255, true));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.DARKNESS, 1000000, 100, true));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 1000000, 100, true));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.JUMP_BOOST, 1000000, 255, true));
                 this.teleportQueue.add(player);
             });
         });
@@ -62,9 +62,9 @@ public class TeleportPhase extends AbstractGamePhase {
             Bukkit.getOnlinePlayers().forEach(player -> {
                 player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 10.0F, 1.0F);
                 Bukkit.getScheduler().runTask(bingo, () -> {
-                    player.removePotionEffect(PotionEffectType.BLINDNESS);
-                    player.removePotionEffect(PotionEffectType.SLOW);
-                    player.removePotionEffect(PotionEffectType.JUMP);
+                    player.removePotionEffect(PotionEffectType.DARKNESS);
+                    player.removePotionEffect(PotionEffectType.SLOWNESS);
+                    player.removePotionEffect(PotionEffectType.JUMP_BOOST);
                 });
             });
         });

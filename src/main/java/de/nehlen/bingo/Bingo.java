@@ -8,11 +8,10 @@ import de.nehlen.bingo.listener.*;
 import de.nehlen.bingo.manager.ScoreboardManager;
 import de.nehlen.bingo.manager.TopWallManager;
 import de.nehlen.bingo.manager.WorldManager;
-import de.nehlen.bingo.phases.EndingCoutdown;
+import de.nehlen.bingo.phases.EndingPhase;
 import de.nehlen.bingo.phases.IngameCountdown;
 import de.nehlen.bingo.phases.LobbyPhase;
 import de.nehlen.bingo.phases.TeleportPhase;
-import de.nehlen.bingo.sidebar.SidebarCache;
 import de.nehlen.bingo.util.fonts.TeamFont;
 import de.nehlen.spookly.Spookly;
 import de.nehlen.spookly.configuration.ConfigurationWrapper;
@@ -74,7 +73,7 @@ public class Bingo extends SpooklyPlugin {
     @Getter private LobbyPhase lobbyPhase;
     @Getter private TeleportPhase teleportPhase;
     @Getter private IngameCountdown ingameCountdown;
-    @Getter private EndingCoutdown endingCoutdown;
+    @Getter private EndingPhase endingPhase;
 
     @Override
     public void load() {
@@ -94,7 +93,7 @@ public class Bingo extends SpooklyPlugin {
         this.topWallManager = new TopWallManager(this);
         this.worldManager = new WorldManager(this);
 
-        this.asyncPlayerChatListener = new AsyncPlayerChatListener(this);
+        this.asyncPlayerChatListener = new AsyncPlayerChatListener();
         this.damageListener = new DamageListener(this);
         this.foodLevelChangeListener = new FoodLevelChangeListener(this);
         this.playerDeathListener = new PlayerDeathListener(this);
@@ -113,7 +112,7 @@ public class Bingo extends SpooklyPlugin {
         this.lobbyPhase = new LobbyPhase(this);
         this.teleportPhase = new TeleportPhase(this);
         this.ingameCountdown = new IngameCountdown(this);
-        this.endingCoutdown = new EndingCoutdown(this);
+        this.endingPhase = new EndingPhase(this);
 
         this.bingoCommand = new BingoCommand(this);
         this.startCommand = new StartCommand(this);

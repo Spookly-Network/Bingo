@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Base64;
 import java.util.logging.Level;
@@ -23,7 +24,7 @@ public class PlayerheadChatComponent {
         JSONObject jsonObject = new JSONObject(new String(bytes));new JSONObject();
         String url = jsonObject.getJSONObject("textures").getJSONObject("SKIN").getString("url");
         try {
-            BufferedImage imageToSend = processImageLayers(ImageIO.read(new URL(url)));
+            BufferedImage imageToSend = processImageLayers(ImageIO.read(URI.create(url).toURL()));
             return toImgComponent(toTextColorArray(imageToSend, 8), font);
         } catch (IOException | NoSuchFieldException | IllegalAccessException e) {
             Bukkit.getLogger().log(Level.SEVERE, "Could not create HeadComponent: " + e.getMessage());
