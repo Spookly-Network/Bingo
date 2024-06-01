@@ -14,8 +14,10 @@ public class TeamListener implements Listener {
         Spookly.getServer().getEventExecuter().register(PlayerJoinTeamEvent.class, event -> {
             SpooklyPlayer player = event.getSpooklyPlayer();
             GameData.getTeamCache().put(event.getSpooklyPlayer().toPlayer(), event.getTeam());
-            if(GameData.getTeamSize() > 1)
-                player.prefix(event.getTeam().prefix(), (event.getTeam().tabSortId()+20));
+            if(GameData.getTeamSize() > 1) {
+                player.nameColor(event.getTeam().teamColor());
+                player.prefix(event.getTeam().prefix(), (event.getTeam().tabSortId() + 20));
+            }
         });
 
         Spookly.getServer().getEventExecuter().register(PlayerQuitTeamEvent.class, event -> {
