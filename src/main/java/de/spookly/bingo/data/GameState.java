@@ -2,11 +2,11 @@ package de.spookly.bingo.data;
 
 public enum GameState {
 
-    LOBBY, INGAME, END;
+	LOBBY, INGAME, END;
 
-    public static GameState state = LOBBY;
+	public static GameState state = LOBBY;
 
-    public GameState getState() {
-        return state;
-    }
+	public GameState getState() {
+		return state;
+	}
 }

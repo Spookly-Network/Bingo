@@ -1,7 +1,18 @@
 package de.spookly.bingo.manager;
 
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.TextReplacementConfig;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextColor;
+import org.apache.commons.lang3.StringUtils;
+
 import de.spookly.bingo.SpooklyBingoPlugin;
-import de.spookly.bingo.util.fonts.TeamFont;
 import de.spookly.bingo.data.GameData;
 import de.spookly.bingo.data.GameState;
 import de.spookly.bingo.data.IngameScoreboardData;
@@ -11,86 +22,77 @@ import de.spookly.bingo.data.helper.TranslatableHelper;
 import de.spookly.bingo.sidebar.Sidebar;
 import de.spookly.bingo.sidebar.SidebarCache;
 import de.spookly.bingo.util.UtilFunctions;
+import de.spookly.bingo.util.fonts.TeamFont;
 import de.spookly.team.Team;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextReplacementConfig;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
-import org.apache.commons.lang3.StringUtils;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 public class ScoreboardManager {
-    private final SpooklyBingoPlugin spooklyBingoPlugin;
+	private final SpooklyBingoPlugin spooklyBingoPlugin;
 
-    private final HashMap<Player, BukkitTask> scoreboardTaskMap = new HashMap<>();
+	private final HashMap<Player, BukkitTask> scoreboardTaskMap = new HashMap<>();
 
-    private final int updateInterval = 1;
+	private final int updateInterval = 1;
 
-    public ScoreboardManager(SpooklyBingoPlugin spooklyBingoPlugin) {
-        this.spooklyBingoPlugin = spooklyBingoPlugin;
-    }
+	public ScoreboardManager(SpooklyBingoPlugin spooklyBingoPlugin) {
+		this.spooklyBingoPlugin = spooklyBingoPlugin;
+	}
 
-    public void setUserScoreboard(final Player player) {
-        if (!this.scoreboardTaskMap.containsKey(player))
-            this.scoreboardTaskMap.put(player, (new BukkitRunnable() {
-                int counter = 0;
-                int sec = 0;
+	public void setUserScoreboard(final Player player) {
+		if (!this.scoreboardTaskMap.containsKey(player))
+			this.scoreboardTaskMap.put(player, (new BukkitRunnable() {
+				int counter = 0;
+				int sec = 0;
 
-                public void run() {
-                    if (GameState.state == GameState.INGAME) {
-                        ScoreboardManager.this.setIngameScoreboardContent(player);
-                    } else {
-                        ScoreboardManager.this.setScoreboardContent(player, this.counter);
-                    }
+				public void run() {
+					if (GameState.state == GameState.INGAME) {
+						ScoreboardManager.this.setIngameScoreboardContent(player);
+					} else {
+						ScoreboardManager.this.setScoreboardContent(player, this.counter);
+					}
 
-                    if (sec >= 15) {
-                        this.counter = ++this.counter % (ScoreboardData.values()).length;
-                        sec = 0;
-                    }
-                    sec++;
-                }
-            }).runTaskTimer((Plugin) this.spooklyBingoPlugin, 0L, 20L));
-    }
+					if (sec >= 15) {
+						this.counter = ++this.counter % (ScoreboardData.values()).length;
+						sec = 0;
+					}
+					sec++;
+				}
+			}).runTaskTimer((Plugin) this.spooklyBingoPlugin, 0L, 20L));
+	}
 
-    public void removeUserScoreboard(Player player) {
-        if (this.scoreboardTaskMap.containsKey(player)) {
-            ((BukkitTask) this.scoreboardTaskMap.get(player)).cancel();
-            this.scoreboardTaskMap.remove(player);
-        }
-    }
+	public void removeUserScoreboard(Player player) {
+		if (this.scoreboardTaskMap.containsKey(player)) {
+			((BukkitTask) this.scoreboardTaskMap.get(player)).cancel();
+			this.scoreboardTaskMap.remove(player);
+		}
+	}
 
-    private void setScoreboardContent(Player player, int pageNumber) {
-        ScoreboardData scoreboardData = ScoreboardData.values()[pageNumber];
+	private void setScoreboardContent(Player player, int pageNumber) {
+		ScoreboardData scoreboardData = ScoreboardData.values()[pageNumber];
 //        this.bingo.getSidebarCache();
-        Sidebar sidebar = SidebarCache.getUniqueCachedSidebar(player);
-        sidebar.setDisplayName(scoreboardData.getDisplayName());
-        scoreboardData.getLines().forEach(line -> {
-            line.replaceText(replaceMaterial("%item1%", player, 0));
-        });
-        sidebar.setLines(scoreboardData.getLines().stream().map(line -> {
-            return line.replaceText(replaceMaterial("%item1%", player, 0))
-                    .replaceText(replaceMaterial("%item2%", player, 1))
-                    .replaceText(replaceMaterial("%item3%", player, 2))
-                    .replaceText(replaceMaterial("%item4%", player, 3))
-                    .replaceText(replaceMaterial("%item5%", player, 4))
-                    .replaceText(replaceMaterial("%item6%", player, 5))
-                    .replaceText(replaceMaterial("%item7%", player, 6))
-                    .replaceText(replaceMaterial("%item8%", player, 7))
-                    .replaceText(replaceMaterial("%item9%", player, 8))
-                    .replaceText(replace("%gamestatus%", Component.text(GameState.state.toString())))
-                    .replaceText(replace("%timer%", Component.text(UtilFunctions.formatTime(SpooklyBingoPlugin.getSpooklyBingoPlugin().getIngamePhase().getCounter()))))
-                    .replaceText(replace("%team%", getTeam(player)));
-        }).collect(Collectors.toList()));
+		Sidebar sidebar = SidebarCache.getUniqueCachedSidebar(player);
+		sidebar.setDisplayName(scoreboardData.getDisplayName());
+		scoreboardData.getLines().forEach(line -> {
+			line.replaceText(replaceMaterial("%item1%", player, 0));
+		});
+		sidebar.setLines(scoreboardData.getLines().stream().map(line -> {
+			return line.replaceText(replaceMaterial("%item1%", player, 0))
+					.replaceText(replaceMaterial("%item2%", player, 1))
+					.replaceText(replaceMaterial("%item3%", player, 2))
+					.replaceText(replaceMaterial("%item4%", player, 3))
+					.replaceText(replaceMaterial("%item5%", player, 4))
+					.replaceText(replaceMaterial("%item6%", player, 5))
+					.replaceText(replaceMaterial("%item7%", player, 6))
+					.replaceText(replaceMaterial("%item8%", player, 7))
+					.replaceText(replaceMaterial("%item9%", player, 8))
+					.replaceText(replace("%gamestatus%", Component.text(GameState.state.toString())))
+					.replaceText(replace("%timer%", Component.text(UtilFunctions.formatTime(SpooklyBingoPlugin.getSpooklyBingoPlugin().getIngamePhase().getCounter()))))
+					.replaceText(replace("%team%", getTeam(player)));
+		}).collect(Collectors.toList()));
 
 //        sidebar.setLines(scoreboardData.getLines(),
 //                "%item1%", getText(player, 0),
@@ -106,25 +108,25 @@ public class ScoreboardManager {
 //                "%timer%", UtilFunctions.formatTime(Bingo.getBingo().getIngamePhase().getCounter()),
 //                "%team%", getTeam(player)
 //        );
-    }
+	}
 
-    private void setIngameScoreboardContent(Player player) {
-        IngameScoreboardData scoreboardData = IngameScoreboardData.PAGE_1;
+	private void setIngameScoreboardContent(Player player) {
+		IngameScoreboardData scoreboardData = IngameScoreboardData.PAGE_1;
 //        this.bingo.getSidebarCache();
-        Sidebar sidebar = SidebarCache.getUniqueCachedSidebar(player);
-        sidebar.setDisplayName(scoreboardData.getDisplayName());
-        SimpleDateFormat df = new SimpleDateFormat("HH:mm");
-        sidebar.setLines(scoreboardData.getLines().stream().map(line -> {
-            return line.replaceText(replaceMaterial("%item1%", player, 0))
-                    .replaceText(replaceMaterial("%item2%", player, 1))
-                    .replaceText(replaceMaterial("%item3%", player, 2))
-                    .replaceText(replaceMaterial("%item4%", player, 3))
-                    .replaceText(replaceMaterial("%item5%", player, 4))
-                    .replaceText(replaceMaterial("%item6%", player, 5))
-                    .replaceText(replaceMaterial("%item7%", player, 6))
-                    .replaceText(replaceMaterial("%item8%", player, 7))
-                    .replaceText(replaceMaterial("%item9%", player, 8));
-        }).collect(Collectors.toList()));
+		Sidebar sidebar = SidebarCache.getUniqueCachedSidebar(player);
+		sidebar.setDisplayName(scoreboardData.getDisplayName());
+		SimpleDateFormat df = new SimpleDateFormat("HH:mm");
+		sidebar.setLines(scoreboardData.getLines().stream().map(line -> {
+			return line.replaceText(replaceMaterial("%item1%", player, 0))
+					.replaceText(replaceMaterial("%item2%", player, 1))
+					.replaceText(replaceMaterial("%item3%", player, 2))
+					.replaceText(replaceMaterial("%item4%", player, 3))
+					.replaceText(replaceMaterial("%item5%", player, 4))
+					.replaceText(replaceMaterial("%item6%", player, 5))
+					.replaceText(replaceMaterial("%item7%", player, 6))
+					.replaceText(replaceMaterial("%item8%", player, 7))
+					.replaceText(replaceMaterial("%item9%", player, 8));
+		}).collect(Collectors.toList()));
 
 //        sidebar.setLines(scoreboardData.getLines(),
 //                "%item1%", getText(player, 0),
@@ -137,80 +139,80 @@ public class ScoreboardManager {
 //                "%item8%", getText(player, 7),
 //                "%item9%", getText(player, 8)
 //        );
-    }
+	}
 
-    public Component getTeam(Player player) {
-        if (GameData.getTeamCache().containsKey(player)) {
-            return GameData.getTeamCache().get(player).prefix().font(TeamFont.KEY);
-        } else {
-            return Component.text("Kein Team");
-        }
-    }
+	public Component getTeam(Player player) {
+		if (GameData.getTeamCache().containsKey(player)) {
+			return GameData.getTeamCache().get(player).prefix().font(TeamFont.KEY);
+		} else {
+			return Component.text("Kein Team");
+		}
+	}
 
-    private Component getTextComponent(Player player, Integer index) {
-        try {
-            Material material = GameData.getItemsToFind().get(index);
-            Component prefix = Component.text("- ").color(NamedTextColor.GRAY);
-            Component itemName = Component.translatable(Objects.requireNonNull(TranslatableHelper.getTranslationKey(material)));
-            TextColor color = NamedTextColor.RED;
+	private Component getTextComponent(Player player, Integer index) {
+		try {
+			Material material = GameData.getItemsToFind().get(index);
+			Component prefix = Component.text("- ").color(NamedTextColor.GRAY);
+			Component itemName = Component.translatable(Objects.requireNonNull(TranslatableHelper.getTranslationKey(material)));
+			TextColor color = NamedTextColor.RED;
 
-            if (GameData.getTeamCache().containsKey(player) && GameState.state != GameState.LOBBY) {
-                Team team = GameData.getTeamCache().get(player);
-                PickList pickList = (PickList) team.memory().get("picklist");
-                if (!pickList.getItems().contains(material)) {
-                    color = NamedTextColor.GREEN;
-                    prefix = Component.text("✔ ").color(NamedTextColor.GREEN);
-                }
-            } else {
-                color = NamedTextColor.GRAY;
-            }
+			if (GameData.getTeamCache().containsKey(player) && GameState.state != GameState.LOBBY) {
+				Team team = GameData.getTeamCache().get(player);
+				PickList pickList = (PickList) team.memory().get("picklist");
+				if (!pickList.getItems().contains(material)) {
+					color = NamedTextColor.GREEN;
+					prefix = Component.text("✔ ").color(NamedTextColor.GREEN);
+				}
+			} else {
+				color = NamedTextColor.GRAY;
+			}
 
-            return prefix.append(itemName.color(color));
-        } catch (IndexOutOfBoundsException ignored) {
-            return Component.empty();
-        }
-    }
+			return prefix.append(itemName.color(color));
+		} catch (IndexOutOfBoundsException ignored) {
+			return Component.empty();
+		}
+	}
 
-    private String getText(Player player, Integer index) {
-        try {
-            Material material = GameData.getItemsToFind().get(index);
-            String itemName = material.name().replace('_', ' ').toLowerCase(Locale.GERMANY);
-            String color = "§c";
-            String prefix = "§7- ";
+	private String getText(Player player, Integer index) {
+		try {
+			Material material = GameData.getItemsToFind().get(index);
+			String itemName = material.name().replace('_', ' ').toLowerCase(Locale.GERMANY);
+			String color = "§c";
+			String prefix = "§7- ";
 
-            if (GameData.getTeamCache().containsKey(player) && GameState.state != GameState.LOBBY) {
-                Team team = GameData.getTeamCache().get(player);
-                PickList pickList = (PickList) team.memory().get("picklist");
-                if (!pickList.getItems().contains(material)) {
-                    color = "§a";
-                    prefix = "§a✔ ";
-                }
-            } else {
-                color = "§7";
-            }
-            String combiened = prefix + color + StringUtils.capitalize(itemName);
+			if (GameData.getTeamCache().containsKey(player) && GameState.state != GameState.LOBBY) {
+				Team team = GameData.getTeamCache().get(player);
+				PickList pickList = (PickList) team.memory().get("picklist");
+				if (!pickList.getItems().contains(material)) {
+					color = "§a";
+					prefix = "§a✔ ";
+				}
+			} else {
+				color = "§7";
+			}
+			String combiened = prefix + color + StringUtils.capitalize(itemName);
 
-            if(combiened.length() > 27) {
-                combiened = combiened.substring(0, 27) + "...";
-            }
+			if(combiened.length() > 27) {
+				combiened = combiened.substring(0, 27) + "...";
+			}
 
-            return combiened;
-        } catch (IndexOutOfBoundsException ignored) {
-            return "";
-        }
-    }
+			return combiened;
+		} catch (IndexOutOfBoundsException ignored) {
+			return "";
+		}
+	}
 
-    private TextReplacementConfig replaceMaterial(String literal, Player player, Integer listIndex) {
-        return TextReplacementConfig.builder()
-                .matchLiteral(literal)
-                .replacement(getTextComponent(player, listIndex))
-                .build();
-    }
+	private TextReplacementConfig replaceMaterial(String literal, Player player, Integer listIndex) {
+		return TextReplacementConfig.builder()
+				.matchLiteral(literal)
+				.replacement(getTextComponent(player, listIndex))
+				.build();
+	}
 
-    private TextReplacementConfig replace(String literal, Component component) {
-        return TextReplacementConfig.builder()
-                .matchLiteral(literal)
-                .replacement(component)
-                .build();
-    }
+	private TextReplacementConfig replace(String literal, Component component) {
+		return TextReplacementConfig.builder()
+				.matchLiteral(literal)
+				.replacement(component)
+				.build();
+	}
 }

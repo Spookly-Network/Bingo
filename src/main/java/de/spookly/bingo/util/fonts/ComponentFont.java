@@ -6,9 +6,9 @@ import net.kyori.adventure.key.Key;
 @Getter
 public abstract class ComponentFont {
 
-    public Key key;
+	public Key key;
 
-    public ComponentFont(String name) {
-        key = Key.key(name);
-    }
+	public ComponentFont(String name) {
+		key = Key.key(name);
+	}
 }

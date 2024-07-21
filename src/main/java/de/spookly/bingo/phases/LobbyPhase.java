@@ -1,143 +1,145 @@
 package de.spookly.bingo.phases;
 
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.List;
+
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.title.Title;
+
+import de.spookly.Spookly;
 import de.spookly.bingo.SpooklyBingoPlugin;
 import de.spookly.bingo.data.GameData;
 import de.spookly.bingo.data.StringData;
 import de.spookly.bingo.util.AbstractGamePhase;
 import de.spookly.bingo.util.UtilFunctions;
-import de.spookly.Spookly;
 import de.spookly.team.Team;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.title.Title;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-
 public class LobbyPhase extends AbstractGamePhase {
 
-    private final SpooklyBingoPlugin spooklyBingoPlugin;
+	private final SpooklyBingoPlugin spooklyBingoPlugin;
 
-    public LobbyPhase(SpooklyBingoPlugin spooklyBingoPlugin) {
-        super(GameData.getStartTime());
-        this.spooklyBingoPlugin = spooklyBingoPlugin;
-    }
+	public LobbyPhase(SpooklyBingoPlugin spooklyBingoPlugin) {
+		super(GameData.getStartTime());
+		this.spooklyBingoPlugin = spooklyBingoPlugin;
+	}
 
-    @Override
-    public void startPhase() {
-        scheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(SpooklyBingoPlugin.getSpooklyBingoPlugin(), () -> {
-            if (counter >= 0) {
-                for (Player players : Bukkit.getOnlinePlayers()) {
-                    players.sendActionBar(secondsLeftComponent());
-                }
+	@Override
+	public void startPhase() {
+		scheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(SpooklyBingoPlugin.getSpooklyBingoPlugin(), () -> {
+			if (counter >= 0) {
+				for (Player players : Bukkit.getOnlinePlayers()) {
+					players.sendActionBar(secondsLeftComponent());
+				}
 
-                if (counter == 60 || counter == 30 || counter == 15 || counter == 10) {
-                    Bukkit.broadcast(startsInComponent());
-                    for (Player players : Bukkit.getOnlinePlayers()) {
-                        players.showTitle(sendCounterTitle());
-                        players.playSound(players.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 10.0F, 1.0F);
-                    }
+				if (counter == 60 || counter == 30 || counter == 15 || counter == 10) {
+					Bukkit.broadcast(startsInComponent());
+					for (Player players : Bukkit.getOnlinePlayers()) {
+						players.showTitle(sendCounterTitle());
+						players.playSound(players.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 10.0F, 1.0F);
+					}
 
-                } else if (counter == 5) {
+				} else if (counter == 5) {
 
-                    //SET TEAM SPAWNPOINT AND AVOID noSpawnBioms
-                    Bukkit.getScheduler().runTaskAsynchronously(spooklyBingoPlugin, () -> {
-                        Spookly.getTeamManager().registeredTeams().forEach(team -> {
-                            Location block;
-                            do {
-                                block = UtilFunctions.getRandomLocation("world");
-                                //TODO check if method works lol
-                                //use nms to check if validSpawn | net.minecraft.world.level.block.state.BlockBehaviour#isValidSpawn
-                            } while (GameData.getNoSpawnBiomes().contains(block.getBlock().getBiome().toString()));
-                            team.addToMemory("spawnLoc", block);
-                        });
-                    });
+					//SET TEAM SPAWNPOINT AND AVOID noSpawnBioms
+					Bukkit.getScheduler().runTaskAsynchronously(spooklyBingoPlugin, () -> {
+						Spookly.getTeamManager().registeredTeams().forEach(team -> {
+							Location block;
+							do {
+								block = UtilFunctions.getRandomLocation("world");
+								//TODO check if method works lol
+								//use nms to check if validSpawn | net.minecraft.world.level.block.state.BlockBehaviour#isValidSpawn
+							} while (GameData.getNoSpawnBiomes().contains(block.getBlock().getBiome().toString()));
+							team.addToMemory("spawnLoc", block);
+						});
+					});
 
-                    Bukkit.broadcast(Component.empty());
-                    Bukkit.broadcast(StringData.getPrefix().append(Component.translatable("bingo.phase.lobby.starts").color(NamedTextColor.GRAY)));
-                    Bukkit.broadcast(StringData.getPrefix()
-                            .append(Component.translatable("bingo.phase.lobby.playersOnline").color(NamedTextColor.GRAY))
-                            .append(Component.text(Bukkit.getOnlinePlayers().size()).color(StringData.getHighlightColor()))
-                            .append(Component.text("/").color(NamedTextColor.GRAY))
-                            .append(Component.text((GameData.getTeamAmount() * GameData.getTeamSize())).color(StringData.getHighlightColor()))
-                            .append(Component.text(".").color(NamedTextColor.GRAY)));
-                    Bukkit.broadcast(startsInComponent());
-                    Bukkit.broadcast(Component.empty());
+					Bukkit.broadcast(Component.empty());
+					Bukkit.broadcast(StringData.getPrefix().append(Component.translatable("bingo.phase.lobby.starts").color(NamedTextColor.GRAY)));
+					Bukkit.broadcast(StringData.getPrefix()
+							.append(Component.translatable("bingo.phase.lobby.playersOnline").color(NamedTextColor.GRAY))
+							.append(Component.text(Bukkit.getOnlinePlayers().size()).color(StringData.getHighlightColor()))
+							.append(Component.text("/").color(NamedTextColor.GRAY))
+							.append(Component.text((GameData.getTeamAmount() * GameData.getTeamSize())).color(StringData.getHighlightColor()))
+							.append(Component.text(".").color(NamedTextColor.GRAY)));
+					Bukkit.broadcast(startsInComponent());
+					Bukkit.broadcast(Component.empty());
 
-                    Bukkit.getOnlinePlayers().forEach(players -> {
-                        players.showTitle(sendCounterTitle());
-                        players.playSound(players.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 10.0F, 1.0F);
-                    });
-                } else if (counter == 0) {
+					Bukkit.getOnlinePlayers().forEach(players -> {
+						players.showTitle(sendCounterTitle());
+						players.playSound(players.getLocation(), Sound.BLOCK_NOTE_BLOCK_BASS, 10.0F, 1.0F);
+					});
+				} else if (counter == 0) {
 
-                    //MIN ANZAHL AN SPIELERN
-                    if (Bukkit.getOnlinePlayers().size() < GameData.getMinPlayerToStartGame()) {
-                        counter = 60;
-                        Bukkit.broadcast(StringData.getPrefix()
-                                .append(Component.translatable("bingo.phase.lobby.notEnoughPlayers").color(NamedTextColor.GRAY)));
-                    } else {
-                        Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "recipe give @a *");
-                        Bukkit.getScheduler().runTaskAsynchronously(SpooklyBingoPlugin.getSpooklyBingoPlugin(), () -> {
-                            // SET CURRENT PLAYERLIST TO GAMEDATA
-                            // SET PLAYER IN TEAMS
-                            ArrayList<Player> playerList = new ArrayList<>();
-                            Spookly.getOnlinePlayers().forEach(splayer -> {
-                                Player player = splayer.toPlayer();
-                                playerList.add(player);
-                                SpooklyBingoPlugin.getSpooklyBingoPlugin().getScoreboardManager().removeUserScoreboard(player); //?
-                                if (!GameData.getTeamCache().containsKey(player)) {
-                                    Team team = Spookly.getTeamManager().registerPlayerToLowestTeam(player);
-                                    GameData.getTeamCache().put(player, team);
-                                }
-                            });
-                            GameData.setIngame(playerList);
-                            Spookly.getTeamManager().removeEmptyTeams();
+					//MIN ANZAHL AN SPIELERN
+					if (Bukkit.getOnlinePlayers().size() < GameData.getMinPlayerToStartGame()) {
+						counter = 60;
+						Bukkit.broadcast(StringData.getPrefix()
+								.append(Component.translatable("bingo.phase.lobby.notEnoughPlayers").color(NamedTextColor.GRAY)));
+					} else {
+						Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "recipe give @a *");
+						Bukkit.getScheduler().runTaskAsynchronously(SpooklyBingoPlugin.getSpooklyBingoPlugin(), () -> {
+							// SET CURRENT PLAYERLIST TO GAMEDATA
+							// SET PLAYER IN TEAMS
+							ArrayList<Player> playerList = new ArrayList<>();
+							Spookly.getOnlinePlayers().forEach(splayer -> {
+								Player player = splayer.toPlayer();
+								playerList.add(player);
+								SpooklyBingoPlugin.getSpooklyBingoPlugin().getScoreboardManager().removeUserScoreboard(player); //?
+								if (!GameData.getTeamCache().containsKey(player)) {
+									Team team = Spookly.getTeamManager().registerPlayerToLowestTeam(player);
+									GameData.getTeamCache().put(player, team);
+								}
+							});
+							GameData.setIngame(playerList);
+							Spookly.getTeamManager().removeEmptyTeams();
 
-                            //SET GAME STATUS TO INGAME
-                            this.endPhase();
-                            spooklyBingoPlugin.getTeleportPhase().startPhase();
-                        });
-                    }
-                }
-            }
-            counter--;
-        }, 20L, 20L);
-    }
+							//SET GAME STATUS TO INGAME
+							this.endPhase();
+							spooklyBingoPlugin.getTeleportPhase().startPhase();
+						});
+					}
+				}
+			}
+			counter--;
+		}, 20L, 20L);
+	}
 
-    public static List<Material> fillItemList() {
-        ArrayList<Material> list = new ArrayList<Material>();
-        for (int i = 0; i < GameData.getItemsAmount(); i++) {
-            Material m = null;
-            while (m == null || list.contains(m)) {
-                m = Material.getMaterial(UtilFunctions.getRandomStringOutList(GameData.getItemPool()));
-            }
-            list.add(m);
-        }
-        GameData.setItemsToFind(list);
-        return list;
-    }
+	public static List<Material> fillItemList() {
+		ArrayList<Material> list = new ArrayList<Material>();
+		for (int i = 0; i < GameData.getItemsAmount(); i++) {
+			Material m = null;
+			while (m == null || list.contains(m)) {
+				m = Material.getMaterial(UtilFunctions.getRandomStringOutList(GameData.getItemPool()));
+			}
+			list.add(m);
+		}
+		GameData.setItemsToFind(list);
+		return list;
+	}
 
-    private Component secondsLeftComponent() {
-        return Component.translatable("bingo.lobby.secondsLeft", Component.text(counter()).color(StringData.getHighlightColor()))
-                .color(NamedTextColor.GRAY);
-    }
+	private Component secondsLeftComponent() {
+		return Component.translatable("bingo.lobby.secondsLeft", Component.text(counter()).color(StringData.getHighlightColor()))
+				.color(NamedTextColor.GRAY);
+	}
 
-    private Component startsInComponent() {
-        return StringData.getPrefix()
-                .append(Component.translatable("bingo.lobby.startsIn",
-                                Component.text(counter()).color(StringData.getHighlightColor()))
-                        .color(NamedTextColor.GRAY));
-    }
+	private Component startsInComponent() {
+		return StringData.getPrefix()
+				.append(Component.translatable("bingo.lobby.startsIn",
+								Component.text(counter()).color(StringData.getHighlightColor()))
+						.color(NamedTextColor.GRAY));
+	}
 
-    private Title sendCounterTitle() {
-        return Title.title(Component.translatable("bingo.phase.lobby.CounterTitle", Component.text(counter()).color(StringData.getHighlightColor())).color(NamedTextColor.GRAY),
-                Component.translatable("bingo.phase.lobby.CounterSubTitle").color(NamedTextColor.GRAY),
-                Title.Times.times(Duration.ofSeconds(Double.valueOf(.5).longValue()), Duration.ofSeconds(1), Duration.ofSeconds(1)));
-    }
+	private Title sendCounterTitle() {
+		return Title.title(Component.translatable("bingo.phase.lobby.CounterTitle", Component.text(counter()).color(StringData.getHighlightColor())).color(NamedTextColor.GRAY),
+				Component.translatable("bingo.phase.lobby.CounterSubTitle").color(NamedTextColor.GRAY),
+				Title.Times.times(Duration.ofSeconds(Double.valueOf(.5).longValue()), Duration.ofSeconds(1), Duration.ofSeconds(1)));
+	}
 }

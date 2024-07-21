@@ -3,20 +3,20 @@ package de.spookly.bingo.sidebar;
 import java.util.List;
 
 public class SidebarText {
-    private final List<String> text;
+	private final List<String> text;
 
-    private final String displayName;
+	private final String displayName;
 
-    public SidebarText(List<String> text, String displayName) {
-        this.text = text;
-        this.displayName = displayName;
-    }
+	public SidebarText(List<String> text, String displayName) {
+		this.text = text;
+		this.displayName = displayName;
+	}
 
-    public List<String> getText() {
-        return this.text;
-    }
+	public List<String> getText() {
+		return this.text;
+	}
 
-    public String getDisplayName() {
-        return this.displayName;
-    }
+	public String getDisplayName() {
+		return this.displayName;
+	}
 }

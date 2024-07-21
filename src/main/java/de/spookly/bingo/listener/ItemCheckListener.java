@@ -1,9 +1,13 @@
 package de.spookly.bingo.listener;
 
+import lombok.AllArgsConstructor;
+
 import de.spookly.bingo.SpooklyBingoPlugin;
 import de.spookly.bingo.data.GameData;
 import de.spookly.bingo.data.GameState;
+import de.spookly.bingo.data.helper.PickList;
 import de.spookly.team.Team;
+
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -16,81 +20,78 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerBucketEntityEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 
-import de.spookly.bingo.data.helper.PickList;
-import lombok.AllArgsConstructor;
-
 @AllArgsConstructor
 public class ItemCheckListener implements Listener {
 
-    private final SpooklyBingoPlugin spooklyBingoPlugin;
+	private final SpooklyBingoPlugin spooklyBingoPlugin;
 
-    @EventHandler
-    public void handlePickUp(EntityPickupItemEvent event) {
-        if (!(GameState.state == GameState.INGAME)) return;
-        if (!(event.getEntity() instanceof Player)) return;
-        if (!GameData.getItemsToFind().contains(event.getItem().getItemStack().getType())) return;
+	@EventHandler
+	public void handlePickUp(EntityPickupItemEvent event) {
+		if (!(GameState.state == GameState.INGAME)) return;
+		if (!(event.getEntity() instanceof Player)) return;
+		if (!GameData.getItemsToFind().contains(event.getItem().getItemStack().getType())) return;
 
-        Material material = event.getItem().getItemStack().getType();
-        Player player = (Player) event.getEntity();
-        Team team = GameData.getTeamCache().get(player);
-        PickList list = (PickList) team.memory().get("picklist");
+		Material material = event.getItem().getItemStack().getType();
+		Player player = (Player) event.getEntity();
+		Team team = GameData.getTeamCache().get(player);
+		PickList list = (PickList) team.memory().get("picklist");
 
-        if (!list.getItems().contains(material)) return;
-        list.completeMaterial(player, team, material);
-    }
+		if (!list.getItems().contains(material)) return;
+		list.completeMaterial(player, team, material);
+	}
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void handleInventoryClick(InventoryClickEvent event) {
-        try {
-            if (event.isCancelled()) return;
-            if (!(GameState.state == GameState.INGAME)) return;
-            if (!(event.getWhoClicked() instanceof Player player)) return;
-            if (event.getResult() != Event.Result.ALLOW) return;
-            if (event.getAction() == InventoryAction.NOTHING) return;
-            if (event.getCurrentItem() == null) return;
-            if (!GameData.getItemsToFind().contains(event.getCurrentItem().getType())) return;
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void handleInventoryClick(InventoryClickEvent event) {
+		try {
+			if (event.isCancelled()) return;
+			if (!(GameState.state == GameState.INGAME)) return;
+			if (!(event.getWhoClicked() instanceof Player player)) return;
+			if (event.getResult() != Event.Result.ALLOW) return;
+			if (event.getAction() == InventoryAction.NOTHING) return;
+			if (event.getCurrentItem() == null) return;
+			if (!GameData.getItemsToFind().contains(event.getCurrentItem().getType())) return;
 
 
-            Material material = event.getCurrentItem().getType();
-            Team team = GameData.getTeamCache().get(player);
-            PickList list = (PickList) team.memory().get("picklist");
+			Material material = event.getCurrentItem().getType();
+			Team team = GameData.getTeamCache().get(player);
+			PickList list = (PickList) team.memory().get("picklist");
 
-            if (!list.getItems().contains(material)) return;
-            list.completeMaterial(player, team, material);
-        } catch (NullPointerException ignored) {
-        } catch (Exception exception) {
-            exception.printStackTrace();
-        }
+			if (!list.getItems().contains(material)) return;
+			list.completeMaterial(player, team, material);
+		} catch (NullPointerException ignored) {
+		} catch (Exception exception) {
+			exception.printStackTrace();
+		}
 
-    }
+	}
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void handleBucketFill(PlayerBucketFillEvent event) {
-        if (event.isCancelled()) return;
-        if (!(GameState.state == GameState.INGAME)) return;
-        if (!GameData.getItemsToFind().contains(event.getItemStack().getType())) return;
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void handleBucketFill(PlayerBucketFillEvent event) {
+		if (event.isCancelled()) return;
+		if (!(GameState.state == GameState.INGAME)) return;
+		if (!GameData.getItemsToFind().contains(event.getItemStack().getType())) return;
 
-        Material material = event.getItemStack().getType();
-        Player player = event.getPlayer();
-        Team team = GameData.getTeamCache().get(player);
-        PickList list = (PickList) team.memory().get("picklist");
+		Material material = event.getItemStack().getType();
+		Player player = event.getPlayer();
+		Team team = GameData.getTeamCache().get(player);
+		PickList list = (PickList) team.memory().get("picklist");
 
-        if (!list.getItems().contains(material)) return;
-        list.completeMaterial(player, team, material);
-    }
+		if (!list.getItems().contains(material)) return;
+		list.completeMaterial(player, team, material);
+	}
 
-    @EventHandler(priority = EventPriority.MONITOR)
-    public void hand(PlayerBucketEntityEvent event) {
-        if (event.isCancelled()) return;
-        if (!(GameState.state == GameState.INGAME)) return;
-        if (!GameData.getItemsToFind().contains(event.getEntityBucket().getType())) return;
+	@EventHandler(priority = EventPriority.MONITOR)
+	public void hand(PlayerBucketEntityEvent event) {
+		if (event.isCancelled()) return;
+		if (!(GameState.state == GameState.INGAME)) return;
+		if (!GameData.getItemsToFind().contains(event.getEntityBucket().getType())) return;
 
-        Material material = event.getEntityBucket().getType();
-        Player player = event.getPlayer();
-        Team team = GameData.getTeamCache().get(player);
-        PickList list = (PickList) team.memory().get("picklist");
+		Material material = event.getEntityBucket().getType();
+		Player player = event.getPlayer();
+		Team team = GameData.getTeamCache().get(player);
+		PickList list = (PickList) team.memory().get("picklist");
 
-        if (!list.getItems().contains(material)) return;
-        list.completeMaterial(player, team, material);
-    }
+		if (!list.getItems().contains(material)) return;
+		list.completeMaterial(player, team, material);
+	}
 }
