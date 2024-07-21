@@ -1,7 +1,7 @@
 # Spookly Bingo
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
-Spookly Bingo is the implementation from our gamemode bingo. Bingo as well as Bingo-Quick are handled over this plugin.
+Spookly Bingo is the implementation from our gamemode spooklyBingoPlugin. Bingo as well as Bingo-Quick are handled over this plugin.
 
 ### Build the Plugin:
 ```shell
