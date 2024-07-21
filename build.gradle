@@ -5,6 +5,9 @@ plugins {
     id "com.diffplug.spotless" version "6.20.0"
 }
 
+group = 'de.spookly'
+version = plugin_version
+
 repositories {
     mavenCentral()
     maven {
