@@ -17,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
@@ -51,7 +52,7 @@ public class TeleportPhase extends AbstractGamePhase {
 			Player player = teleportQueue.get(0);
 			Team team = GameData.getTeamCache().get(player);
 			Location loc = (Location) team.memory().get("spawnLoc");
-			player.teleport(loc);
+			player.teleportAsync(loc, PlayerTeleportEvent.TeleportCause.PLUGIN);
 
 			Bukkit.getOnlinePlayers().forEach(p -> {
 				p.sendActionBar(Component.translatable("phase.teleport.teleporting").color(NamedTextColor.GRAY));

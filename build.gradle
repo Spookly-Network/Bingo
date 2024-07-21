@@ -56,6 +56,13 @@ processResources {
     }
 }
 
+jar {
+    archiveFileName = "SpooklyBingo-${version}.jar"
+    manifest {
+        attributes["paperweight-mappings-namespace"] = "mojang"
+    }
+}
+
 build {
     dependsOn spotlessApply;
 }
