@@ -42,9 +42,9 @@ public class BingoRegistry {
 	}
 
 	public void registerTranslations() {
-		TranslationRegistry registry = TranslationRegistry.create(Key.key("spookly_bingo:value"));
-		ResourceBundle bundleUS = ResourceBundle.getBundle("spookly_bingo.Translations", Locale.US, UTF8ResourceBundleControl.get());
-		ResourceBundle bundleDE = ResourceBundle.getBundle("spookly_bingo.Translations", Locale.GERMANY, UTF8ResourceBundleControl.get());
+		TranslationRegistry registry = TranslationRegistry.create(Key.key("SpooklyBingo:value"));
+		ResourceBundle bundleUS = ResourceBundle.getBundle("SpooklyBingo.Translations", Locale.US, UTF8ResourceBundleControl.get());
+		ResourceBundle bundleDE = ResourceBundle.getBundle("SpooklyBingo.Translations", Locale.GERMANY, UTF8ResourceBundleControl.get());
 
 		registry.registerAll(Locale.US, bundleUS, true);
 		registry.registerAll(Locale.GERMAN, bundleDE, true);
