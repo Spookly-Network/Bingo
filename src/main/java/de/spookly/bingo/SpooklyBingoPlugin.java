@@ -143,7 +143,7 @@ public class SpooklyBingoPlugin extends SpooklyPlugin {
 		registerCommandOnly("backpack", this.backpackCommand);
 		registerCommandOnly("stats", this.statsCommand);
 		registerCommandOnly("hud", new hudCommand());
-		this.worldManager.setWorldSettingsForLobbyWorlds(Objects.requireNonNull(Bukkit.getWorld("Lobby_Bingo")));
+		this.worldManager.setWorldSettingsForLobbyWorlds(Objects.requireNonNull(Bukkit.getWorld("lobby_bingo")));
 	}
 
 	@Override
