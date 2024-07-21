@@ -1,4 +1,4 @@
-main: de.spookly.bingo.Bingo
+main: de.spookly.bingo.SpooklyBingoPlugin
 name: SpooklyBingo
 version: '${version}'
 api-version: 1.21
@@ -9,7 +9,6 @@ depend:
   - SpooklyCloudnetUtils
   - SpooklyCore
 libraries:
-  - 'org.mongodb:mongodb-driver-reactivestreams:${mongodb_driver_version}'
   - 'org.json:json:${json_version}'
 commands:
   bingo:
