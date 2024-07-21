@@ -5,7 +5,6 @@ import de.nehlen.spookly.Spookly;
 import de.nehlen.spookly.player.SpooklyPlayer;
 import de.nehlen.spookly.team.PlayerJoinTeamEvent;
 import de.nehlen.spookly.team.PlayerQuitTeamEvent;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 public class TeamListener implements Listener {
@@ -15,8 +14,8 @@ public class TeamListener implements Listener {
             SpooklyPlayer player = event.getSpooklyPlayer();
             GameData.getTeamCache().put(event.getSpooklyPlayer().toPlayer(), event.getTeam());
             if(GameData.getTeamSize() > 1) {
-                player.nameColor(event.getTeam().teamColor());
-                player.prefix(event.getTeam().prefix(), (event.getTeam().tabSortId() + 20));
+                player.nameColor(event.getTeam().getTeamDisplay().getColor());
+                player.prefix(event.getTeam().getTeamDisplay().getPrefix(), (event.getTeam().tabSortId() + 20));
             }
         });
 

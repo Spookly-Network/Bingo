@@ -1,15 +1,15 @@
 package de.nehlen.bingo.phases;
 
 import de.nehlen.bingo.Bingo;
-import de.nehlen.bingo.util.fonts.SmallPixelFont;
-import de.nehlen.bingo.util.fonts.TeamFont;
 import de.nehlen.bingo.data.GameData;
 import de.nehlen.bingo.data.GameState;
 import de.nehlen.bingo.data.StringData;
 import de.nehlen.bingo.data.helper.TextComponentHelper;
-import de.nehlen.bingo.factory.UserFactory;
+import de.nehlen.bingo.statistics.player.BingoPlayerStats;
 import de.nehlen.bingo.util.AbstractGamePhase;
 import de.nehlen.bingo.util.Items;
+import de.nehlen.bingo.util.fonts.SmallPixelFont;
+import de.nehlen.bingo.util.fonts.TeamFont;
 import de.nehlen.bingo.util.playerheads.BigHeadMessage;
 import de.nehlen.bingo.util.playerheads.PlayerheadChatComponent;
 import de.nehlen.spookly.Spookly;
@@ -37,7 +37,7 @@ public class EndingPhase extends AbstractGamePhase {
     public void teamWin(Team team) {
 
         GameState.state = GameState.END;
-        bingo.getIngameCountdown().endPhase();
+        bingo.getIngamePhase().endPhase();
 
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (player != null) {
@@ -74,13 +74,14 @@ public class EndingPhase extends AbstractGamePhase {
             if (team.maxTeamSize() <= 1) {
                 Player winner = team.registeredPlayers().getFirst();
                 SpooklyPlayer spooklyPlayer = Spookly.getPlayer(winner.getUniqueId());
+                BingoPlayerStats stats = bingo.getPlayerStatisticsManager().getPlayerStatistics(spooklyPlayer);
 
                 winComponent.set(BigHeadMessage.getComponent(winner.getPlayer(), winner.displayName().color(StringData.getHighlightColor())
                         .append(Component.text(" hat das Spiel Gewonnen.").color(NamedTextColor.GRAY))));
 
                 spooklyPlayer.addPoints(350);
+                stats.setGamesWon(stats.getGamesWon() + 1);
                 winner.sendMessage(TextComponentHelper.addPointsComponent(350));
-                bingo.getUserFactory().updateWins(winner, UserFactory.UpdateType.ADD, 1);
             } else {
                 winComponent.set(winComponent.get().append(team.prefix().font(TeamFont.KEY))
                         .append(Component.text(" hat das Spiel Gewonnen.").color(NamedTextColor.GRAY))
@@ -90,6 +91,7 @@ public class EndingPhase extends AbstractGamePhase {
 
                 team.registeredPlayers().forEach(player -> {
                     SpooklyPlayer spooklyPlayer = Spookly.getPlayer(player.getUniqueId());
+                    BingoPlayerStats stats = bingo.getPlayerStatisticsManager().getPlayerStatistics(spooklyPlayer);
                     winComponent.set(winComponent.get().append(Component.newline())
                             .append(Component.text("- ").color(NamedTextColor.GRAY))
                             .append(PlayerheadChatComponent.getHeadComponent(player, SmallPixelFont.class).font(SmallPixelFont.KEY))
@@ -97,8 +99,8 @@ public class EndingPhase extends AbstractGamePhase {
                             .append(player.displayName()));
 
                     spooklyPlayer.addPoints(250);
+                    stats.setGamesWon(stats.getGamesWon() + 1);
                     player.sendMessage(TextComponentHelper.addPointsComponent(250));
-                    Bingo.getBingo().getUserFactory().updateWins(player, UserFactory.UpdateType.ADD, 1);
                 });
             }
             Bukkit.broadcast(winComponent.get().append(TextComponentHelper.newLineComponent()));

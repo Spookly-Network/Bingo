@@ -1,0 +1,59 @@
+plugins {
+    id 'java'
+    id("io.freefair.lombok") version "8.6"
+    id("io.papermc.paperweight.userdev") version "1.7.1"
+    id "com.diffplug.spotless" version "6.20.0"
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "papermc-repo"
+        url = "https://repo.papermc.io/repository/maven-public/"
+    }
+    maven {
+        name = "spooklyRepositoryReleases"
+        url = "https://mvn.spookly.net/releases"
+    }
+    maven {
+        name = "spooklyRepositorySnapshots"
+        url = "https://mvn.spookly.net/snapshots"
+    }
+}
+
+dependencies {
+    //External API's
+    compileOnly "org.jetbrains:annotations:${jetbrains_annotations}"
+    compileOnly "org.projectlombok:lombok:${lombok_version}"
+    annotationProcessor "org.projectlombok:lombok:${lombok_version}"
+    implementation "org.json:json:${json_version}"
+
+    //Internal API's
+    compileOnly "de.spookly:SpooklyCoreAPI:${core_version}"
+    compileOnly "de.nehlen:SpooklyCloudNetUtils:${cloud_utils_version}"
+
+    //Paper / NMS
+    paperweight.paperDevBundle(project.paper_version)
+}
+
+spotless {
+    java {
+        removeUnusedImports()
+        importOrder('java', 'javax', '', 'de.spookly', 'net.minecraft', 'org.bukkit')
+        indentWithTabs()
+        trimTrailingWhitespace()
+    }
+}
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}
+
+build {
+    dependsOn spotlessApply;
+}

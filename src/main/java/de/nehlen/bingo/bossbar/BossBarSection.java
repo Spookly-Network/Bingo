@@ -1,18 +1,24 @@
 package de.nehlen.bingo.bossbar;
 
 import lombok.Data;
+import net.kyori.adventure.text.Component;
+
 
 @Data
 public class BossBarSection {
+    private Component icon;
+    private Component content;
+    private BossComponentHelper.BossBackgroundSize size;
 
-    private char icon;
-    private String content;
-    private int pixel;
-
-    public BossBarSection(char icon, String content) {
-        this.icon = icon;
+    public BossBarSection(BossComponentHelper.BossBackgroundSize containerSize, char icon, Component content) {
+        this.icon = Component.text(icon);
         this.content = content;
-        this.pixel=content.length()*5;
+        this.size=containerSize;
     }
 
+    public BossBarSection(BossComponentHelper.BossBackgroundSize containerSize, String icon, Component content) {
+        this.icon = Component.text(icon);
+        this.content = content;
+        this.size=containerSize;
+    }
 }

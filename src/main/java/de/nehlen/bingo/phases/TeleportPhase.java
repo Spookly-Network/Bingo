@@ -39,10 +39,11 @@ public class TeleportPhase extends AbstractGamePhase {
             });
         });
 
+
         scheduler = Bukkit.getScheduler().scheduleSyncRepeatingTask(Bingo.getBingo(), () -> {
             if (teleportQueue.isEmpty()) {
                 endPhase();
-                bingo.getIngameCountdown().startPhase();
+                bingo.getIngamePhase().startPhase();
                 return;
             }
             Player player = teleportQueue.get(0);

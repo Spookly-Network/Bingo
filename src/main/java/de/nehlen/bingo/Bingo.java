@@ -2,47 +2,37 @@ package de.nehlen.bingo;
 
 import de.nehlen.bingo.commands.*;
 import de.nehlen.bingo.data.GameData;
-import de.nehlen.bingo.data.helper.PickList;
-import de.nehlen.bingo.factory.UserFactory;
 import de.nehlen.bingo.listener.*;
 import de.nehlen.bingo.manager.ScoreboardManager;
 import de.nehlen.bingo.manager.TopWallManager;
 import de.nehlen.bingo.manager.WorldManager;
 import de.nehlen.bingo.phases.EndingPhase;
-import de.nehlen.bingo.phases.IngameCountdown;
+import de.nehlen.bingo.phases.IngamePhase;
 import de.nehlen.bingo.phases.LobbyPhase;
 import de.nehlen.bingo.phases.TeleportPhase;
-import de.nehlen.bingo.util.fonts.TeamFont;
+import de.nehlen.bingo.statistics.player.PlayerStatisticsManager;
 import de.nehlen.spookly.Spookly;
 import de.nehlen.spookly.configuration.ConfigurationWrapper;
-import de.nehlen.spookly.database.Connection;
 import de.nehlen.spookly.plugin.SpooklyPlugin;
 import de.nehlen.spooklycloudnetutils.helper.CloudStateHelper;
 import de.nehlen.spooklycloudnetutils.helper.CloudWrapperHelper;
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.WorldCreator;
 import org.ipvp.canvas.MenuFunctionListener;
 
 import java.io.File;
-import java.lang.reflect.Field;
-import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
 
 public class Bingo extends SpooklyPlugin {
 
     @Getter private static Bingo bingo;
-    @Getter private BingoRegistry bingoRegistry;
+    @Getter private static BingoRegistry registry;
+
     @Getter private ConfigurationWrapper generalConfig;
     @Getter private ConfigurationWrapper locationConfig;
     @Getter private ConfigurationWrapper itemsConfig;
     @Getter private ScoreboardManager scoreboardManager;
-    @Getter private Connection databaseLib;
-    @Getter private UserFactory userFactory;
 
     @Getter private WorldManager worldManager;
     @Getter private TopWallManager topWallManager;
@@ -72,8 +62,10 @@ public class Bingo extends SpooklyPlugin {
 
     @Getter private LobbyPhase lobbyPhase;
     @Getter private TeleportPhase teleportPhase;
-    @Getter private IngameCountdown ingameCountdown;
+    @Getter private IngamePhase ingamePhase;
     @Getter private EndingPhase endingPhase;
+
+    @Getter private PlayerStatisticsManager playerStatisticsManager;
 
     @Override
     public void load() {
@@ -82,16 +74,15 @@ public class Bingo extends SpooklyPlugin {
 
     @Override
     public void enable() {
-        this.bingoRegistry = new BingoRegistry(this);
+        registry = new BingoRegistry(this);
         this.generalConfig = Spookly.getServer().createConfiguration(new File(getDataFolder(), "general_settings.yml"));
         this.locationConfig = Spookly.getServer().createConfiguration(new File(getDataFolder(), "location_settings.yml"));
         this.itemsConfig = Spookly.getServer().createConfiguration(new File(getDataFolder(), "items_settings.yml"));
 
         this.scoreboardManager = new ScoreboardManager(this);
-        this.databaseLib = Spookly.getServer().getConnection();
-        this.userFactory = new UserFactory(this);
         this.topWallManager = new TopWallManager(this);
         this.worldManager = new WorldManager(this);
+        this.playerStatisticsManager = new PlayerStatisticsManager();
 
         this.asyncPlayerChatListener = new AsyncPlayerChatListener();
         this.damageListener = new DamageListener(this);
@@ -111,7 +102,7 @@ public class Bingo extends SpooklyPlugin {
 
         this.lobbyPhase = new LobbyPhase(this);
         this.teleportPhase = new TeleportPhase(this);
-        this.ingameCountdown = new IngameCountdown(this);
+        this.ingamePhase = new IngamePhase(this);
         this.endingPhase = new EndingPhase(this);
 
         this.bingoCommand = new BingoCommand(this);
@@ -125,19 +116,8 @@ public class Bingo extends SpooklyPlugin {
         Bukkit.createWorld(w);
         bingo.getServer().getWorlds().add(Bukkit.getWorld("lobby_bingo"));
 
-        this.userFactory.createTable();
         // SET BINGO ITEMS IN GAMEDATA
         LobbyPhase.fillItemList();
-
-        try {
-            loadTeams();
-        } catch (NoSuchFieldException e) {
-            Bukkit.getLogger().log(Level.SEVERE, "could not load Team because team prefix char was not present");
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            Bukkit.getLogger().log(Level.SEVERE, "just no");
-            throw new RuntimeException(e);
-        }
 
         registerEvent(new MenuFunctionListener());
         registerEvent(this.asyncPlayerChatListener);
@@ -177,22 +157,12 @@ public class Bingo extends SpooklyPlugin {
     @Override
     protected void postStartup() {
         this.getTopWallManager().setWall();
-        this.bingoRegistry.registerTranslatables();
+
+        registry.registerTranslations();
+        registry.registerTeams();
 
         CloudStateHelper.changeServiceMotd(GameData.getTeamAmount() + "x" + GameData.getTeamSize());
         CloudStateHelper.changeServiceMaxPlayers(GameData.getTeamAmount() * GameData.getTeamSize());
         CloudWrapperHelper.publishServiceInfoUpdate();
-    }
-
-
-    public static void loadTeams() throws NoSuchFieldException, IllegalAccessException {
-        List<TextColor> teamColor = List.of(NamedTextColor.RED, TextColor.fromHexString("#448400"), TextColor.fromHexString("#00aeff"), TextColor.fromHexString("#ffb100"), NamedTextColor.LIGHT_PURPLE, TextColor.fromHexString("#ff5733"), TextColor.fromHexString("#009688"), TextColor.fromHexString("#9c27b0"), TextColor.fromHexString("#c62828"));
-
-        for (int i = 0; i < GameData.getTeamAmount(); i++) {
-            Field field = TeamFont.class.getDeclaredField("TEAM_" + (i + 1));
-            PickList picklist = new PickList(GameData.getItemsToFind());
-
-            Spookly.getTeamManager().registerTeam(Spookly.buildTeam().teamColor(teamColor.get(i)).teamName(Component.text("Team-" + (i + 1)).color(teamColor.get(i))).maxTeamSize(GameData.getTeamSize()).prefix(Component.empty().append(Component.text((String) field.get(null)).font(TeamFont.KEY).color(NamedTextColor.WHITE)).append(Component.text(" "))).tabSortId((i + 1)).addToMemory("picklist", picklist).build());
-        }
     }
 }

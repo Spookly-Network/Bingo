@@ -1,9 +1,16 @@
-name: Bingo
-version: ${project.version}
 main: de.nehlen.bingo.Bingo
-api-version: 1.20
-depend: [ SpooklyCloudnetUtils, Spookly-Core ]
-authors: [ NEhlen ]
+name: SpooklyBingo
+version: '${version}'
+api-version: 1.21
+website: https://spookly.net
+author:
+  - Niklas Ehlen
+depend:
+  - SpooklyCloudnetUtils
+  - SpooklyCore
+libraries:
+  - 'org.mongodb:mongodb-driver-reactivestreams:${mongodb_driver_version}'
+  - 'org.json:json:${json_version}'
 commands:
   bingo:
     aliases:

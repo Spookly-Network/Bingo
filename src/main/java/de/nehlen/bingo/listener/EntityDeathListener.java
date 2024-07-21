@@ -3,7 +3,7 @@ package de.nehlen.bingo.listener;
 import de.nehlen.bingo.Bingo;
 import de.nehlen.bingo.data.StringData;
 import de.nehlen.bingo.data.helper.TextComponentHelper;
-import de.nehlen.bingo.factory.UserFactory;
+import de.nehlen.bingo.statistics.player.BingoPlayerStats;
 import de.nehlen.spookly.Spookly;
 import de.nehlen.spookly.player.SpooklyPlayer;
 import net.kyori.adventure.text.Component;
@@ -17,6 +17,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 
+import java.util.Optional;
+
 public class EntityDeathListener implements Listener {
 
     private final Bingo bingo;
@@ -28,10 +30,11 @@ public class EntityDeathListener implements Listener {
     @EventHandler
     public void handleDeath(EntityDeathEvent event) {
         Entity entity = event.getEntity();
-        Entity killer = event.getEntity().getKiller();
-        if (killer instanceof Player) {
-            Player player = (Player) killer;
+        Optional<Player> killer = Optional.ofNullable(event.getEntity().getKiller());
+        if (killer.isPresent()) {
+            Player player = killer.get();
             SpooklyPlayer spooklyPlayer = Spookly.getPlayer(player);
+            BingoPlayerStats stats = bingo.getPlayerStatisticsManager().getPlayerStatistics(spooklyPlayer);
 
             if (event.getEntityType().equals(EntityType.SHEEP)) {
                 Sheep sheep = (Sheep) entity;
@@ -41,8 +44,8 @@ public class EntityDeathListener implements Listener {
                                     Component.translatable("stats.brownSheep.sheep").color(StringData.getHighlightColor())
                             ).color(NamedTextColor.GRAY)));
                     player.sendMessage(TextComponentHelper.addPointsComponent(20));
+                    stats.setBrownSheep(stats.getBrownSheep() + 1);
                     spooklyPlayer.addPoints(20);
-                    this.bingo.getUserFactory().updateBrownSheeps(player, UserFactory.UpdateType.ADD, 1);
                 }
             }
         }

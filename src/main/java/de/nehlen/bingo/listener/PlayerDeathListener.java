@@ -3,7 +3,9 @@ package de.nehlen.bingo.listener;
 import de.nehlen.bingo.Bingo;
 import de.nehlen.bingo.data.GameData;
 import de.nehlen.bingo.data.StringData;
-import de.nehlen.bingo.factory.UserFactory;
+import de.nehlen.bingo.statistics.player.BingoPlayerStats;
+import de.nehlen.spookly.Spookly;
+import de.nehlen.spookly.player.SpooklyPlayer;
 import de.nehlen.spookly.team.Team;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -23,11 +25,14 @@ public class PlayerDeathListener implements Listener {
 
     @EventHandler
     public void handleDeath(PlayerDeathEvent event) {
-
         Player player = event.getEntity();
-        bingo.getUserFactory().updateDeaths(player, UserFactory.UpdateType.ADD, 1);
-        event.deathMessage(StringData.getPrefix().append(player.name().color(StringData.getHighlightColor()))
-                .append(Component.text(" ist gestorben.").color(NamedTextColor.GRAY)));
+        SpooklyPlayer spooklyPlayer = Spookly.getPlayer(player);
+        BingoPlayerStats statistics = Bingo.getBingo().getPlayerStatisticsManager().getPlayerStatistics(spooklyPlayer);
+
+        statistics.setDeaths(statistics.getDeaths() + 1);
+        event.deathMessage(StringData.getPrefix()
+                .append(Component.translatable("gamemode.bingo.general.death", spooklyPlayer.nameTag())
+                        .color(NamedTextColor.GRAY)));
 
     }
 
@@ -36,7 +41,7 @@ public class PlayerDeathListener implements Listener {
         Player player = event.getPlayer();
         Team team = GameData.getTeamCache().get(player);
 
-        if(player.getRespawnLocation() == null) {
+        if (player.getRespawnLocation() == null) {
             event.setRespawnLocation((Location) team.memory().get("spawnLoc"));
         }
     }

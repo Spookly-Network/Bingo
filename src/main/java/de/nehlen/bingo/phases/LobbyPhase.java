@@ -3,16 +3,17 @@ package de.nehlen.bingo.phases;
 import de.nehlen.bingo.Bingo;
 import de.nehlen.bingo.data.GameData;
 import de.nehlen.bingo.data.StringData;
-import de.nehlen.bingo.factory.UserFactory;
 import de.nehlen.bingo.util.AbstractGamePhase;
 import de.nehlen.bingo.util.UtilFunctions;
 import de.nehlen.spookly.Spookly;
 import de.nehlen.spookly.team.Team;
-import de.nehlen.spooklycloudnetutils.helper.CloudStateHelper;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.title.Title;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import java.time.Duration;
@@ -51,6 +52,8 @@ public class LobbyPhase extends AbstractGamePhase {
                             Location block;
                             do {
                                 block = UtilFunctions.getRandomLocation("world");
+                                //TODO check if method works lol
+                                //use nms to check if validSpawn | net.minecraft.world.level.block.state.BlockBehaviour#isValidSpawn
                             } while (GameData.getNoSpawnBiomes().contains(block.getBlock().getBiome().toString()));
                             team.addToMemory("spawnLoc", block);
                         });
@@ -79,21 +82,14 @@ public class LobbyPhase extends AbstractGamePhase {
                         Bukkit.broadcast(StringData.getPrefix()
                                 .append(Component.translatable("bingo.phase.lobby.notEnoughPlayers").color(NamedTextColor.GRAY)));
                     } else {
-
-
                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "recipe give @a *");
                         Bukkit.getScheduler().runTaskAsynchronously(Bingo.getBingo(), () -> {
                             // SET CURRENT PLAYERLIST TO GAMEDATA
                             // SET PLAYER IN TEAMS
                             ArrayList<Player> playerList = new ArrayList<>();
-                            Bukkit.getOnlinePlayers().forEach(player -> {
-                                Bukkit.getScheduler().runTask(bingo, () -> {
-                                    player.getInventory().clear();
-                                    player.setGameMode(GameMode.SURVIVAL);
-                                });
-
+                            Spookly.getOnlinePlayers().forEach(splayer -> {
+                                Player player = splayer.toPlayer();
                                 playerList.add(player);
-                                Bingo.getBingo().getUserFactory().updateGames(player, UserFactory.UpdateType.ADD, 1);
                                 Bingo.getBingo().getScoreboardManager().removeUserScoreboard(player); //?
                                 if (!GameData.getTeamCache().containsKey(player)) {
                                     Team team = Spookly.getTeamManager().registerPlayerToLowestTeam(player);
@@ -103,12 +99,9 @@ public class LobbyPhase extends AbstractGamePhase {
                             GameData.setIngame(playerList);
                             Spookly.getTeamManager().removeEmptyTeams();
 
-
                             //SET GAME STATUS TO INGAME
-                            CloudStateHelper.changeServiceToIngame();
                             this.endPhase();
                             bingo.getTeleportPhase().startPhase();
-//                            this.bingo.getIngameCountdown().startPhase();
                         });
                     }
                 }

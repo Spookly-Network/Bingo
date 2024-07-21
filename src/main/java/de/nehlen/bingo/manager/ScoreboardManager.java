@@ -88,7 +88,7 @@ public class ScoreboardManager {
                     .replaceText(replaceMaterial("%item8%", player, 7))
                     .replaceText(replaceMaterial("%item9%", player, 8))
                     .replaceText(replace("%gamestatus%", Component.text(GameState.state.toString())))
-                    .replaceText(replace("%timer%", Component.text(UtilFunctions.formatTime(Bingo.getBingo().getIngameCountdown().getCounter()))))
+                    .replaceText(replace("%timer%", Component.text(UtilFunctions.formatTime(Bingo.getBingo().getIngamePhase().getCounter()))))
                     .replaceText(replace("%team%", getTeam(player)));
         }).collect(Collectors.toList()));
 
@@ -103,7 +103,7 @@ public class ScoreboardManager {
 //                "%item8%", getText(player, 7),
 //                "%item9%", getText(player, 8),
 //                "%gamestatus%", GameState.state.toString(),
-//                "%timer%", UtilFunctions.formatTime(Bingo.getBingo().getIngameCountdown().getCounter()),
+//                "%timer%", UtilFunctions.formatTime(Bingo.getBingo().getIngamePhase().getCounter()),
 //                "%team%", getTeam(player)
 //        );
     }

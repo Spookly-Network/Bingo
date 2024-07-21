@@ -60,6 +60,13 @@ public class ItemBuilder {
         return this;
     }
 
+    public ItemBuilder lore(List<Component> lore) {
+        ItemMeta meta = item.getItemMeta();
+        meta.lore(lore);
+        item.setItemMeta(meta);
+        return this;
+    }
+
     public ItemBuilder addLoreLine(Component line) {
         ItemMeta meta = item.getItemMeta();
         var lore = meta.lore();

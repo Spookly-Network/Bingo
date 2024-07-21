@@ -2,7 +2,8 @@ package de.nehlen.bingo.inventroy;
 
 import de.nehlen.bingo.data.GameData;
 import de.nehlen.bingo.data.StringData;
-import de.nehlen.bingo.util.Items;
+import de.nehlen.bingo.data.helper.TextComponentHelper;
+import de.nehlen.bingo.util.ItemBuilder;
 import de.nehlen.spookly.Spookly;
 import de.nehlen.spookly.inventory.AbstractMultiPageInventory;
 import de.nehlen.spookly.inventory.HandleResult;
@@ -14,7 +15,12 @@ import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.ipvp.canvas.ClickInformation;
+import org.ipvp.canvas.mask.BinaryMask;
+import org.ipvp.canvas.mask.Mask;
+import org.ipvp.canvas.mask.RecipeMask;
+import org.ipvp.canvas.slot.SlotSettings;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -22,12 +28,41 @@ import java.util.UUID;
 public class TeamSelectInventory extends AbstractMultiPageInventory {
 
     public TeamSelectInventory(Integer size, Player player) {
-        super(size, Component.translatable("gamemode.general.lobby.teamSelect"), player);
+        super(size, TextComponentHelper.menuBuilder()
+                        .setBackground('\uE101')
+                        .setTitle(Component.translatable("gamemode.general.gui.teamSelect"))
+                        .build(),
+                dimension -> {
+                    return BinaryMask.builder(dimension)
+                            .pattern("000000000")
+                            .pattern("111111111")
+                            .build();
+                }, player);
         addItems();
     }
 
     private void addItems() {
-        Spookly.getServer().getTeamManager().registeredTeams().forEach(team -> {
+        newMenuModifier(menu -> {
+            Mask mask = RecipeMask.builder(menu)
+                    .item('a', new ItemStack(Material.AIR))
+                    .item('c', SlotSettings.builder()
+                            .item(ItemBuilder.of(Material.PAPER)
+                                    .customModelData(20001)
+                                    .displayName(Component.translatable("gamemode.general.gui.close")
+                                            .color(NamedTextColor.RED).
+                                            decoration(TextDecoration.ITALIC, false))
+                                    .build())
+                            .clickHandler(this::handleClose)
+                            .build())
+                    .row(1)
+                    .pattern("aaaaaaaac")
+                    .build();
+            mask.apply(menu);
+        });
+
+
+        int i = 1;
+        for (Team team : Spookly.getTeamManager().registeredTeams()) {
             ArrayList<Component> lore = new ArrayList<>();
             lore.add(Component.text(team.size()).decoration(TextDecoration.ITALIC, false).color(StringData.getHighlightColor())
                     .append(Component.text("/").style(Style.style(NamedTextColor.GRAY)))
@@ -36,16 +71,33 @@ public class TeamSelectInventory extends AbstractMultiPageInventory {
                 lore.add(Component.text("- ").style(Style.style(NamedTextColor.GRAY))
                         .append(teamPlayer.displayName().decoration(TextDecoration.ITALIC, false)));
             });
-            if(team.registeredPlayers().contains(player)) {
-                add(Items.createLore(Material.LIME_DYE, team.teamName(), lore, 1), HandleResult.DENY_GRABBING);
+            if (team.registeredPlayers().contains(player)) {
+                add(ItemBuilder.of(Material.PAPER)
+                        .displayName(team.teamName().decoration(TextDecoration.ITALIC, false))
+                        .lore(lore)
+                        .amount(1)
+                        .customModelData(30000 + (i + 1))
+                        .build(), HandleResult.DENY_GRABBING);
             } else if (team.size().equals(team.maxTeamSize())) {
-                add(Items.createLore(Material.RED_DYE, team.teamName(), lore, 1), HandleResult.DENY_GRABBING);
+                add(ItemBuilder.of(Material.PAPER)
+                        .displayName(team.teamName().decoration(TextDecoration.ITALIC, false))
+                        .lore(lore)
+                        .amount(1)
+                        .customModelData(30019)
+                        .build(), HandleResult.DENY_GRABBING);
             } else {
                 lore.add(Component.empty());
                 lore.add(Component.translatable("gamemode.general.invenotry.team.join").color(NamedTextColor.GRAY));
-                add(Items.createLore(Material.LIGHT_GRAY_DYE, team.teamName(), lore, 1), HandleResult.DENY_GRABBING, this::handleItemClick, team.uuid().toString());
+                add(ItemBuilder.of(Material.PAPER)
+                        .displayName(team.teamName().decoration(TextDecoration.ITALIC, false))
+                        .lore(lore)
+                        .amount(1)
+                        .customModelData(30000 + i)
+                        .build(), HandleResult.DENY_GRABBING, this::handleItemClick, team.uuid().toString());
             }
-        });
+
+            i += 2;
+        }
     }
 
     private void handleItemClick(Player player, ClickInformation clickInformation) {
@@ -57,4 +109,9 @@ public class TeamSelectInventory extends AbstractMultiPageInventory {
         player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 1, 0);
         player.closeInventory();
     }
+
+    private void handleClose(Player player, ClickInformation clickInformation) {
+        player.closeInventory();
+    }
+
 }

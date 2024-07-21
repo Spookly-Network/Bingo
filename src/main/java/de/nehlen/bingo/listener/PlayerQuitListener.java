@@ -4,7 +4,10 @@ import de.nehlen.bingo.Bingo;
 import de.nehlen.bingo.data.GameData;
 import de.nehlen.bingo.data.GameState;
 import de.nehlen.bingo.data.StringData;
+import de.nehlen.bingo.statistics.player.BingoPlayerStats;
 import de.nehlen.spookly.Spookly;
+import de.nehlen.spookly.player.PlayerUnregisterEvent;
+import de.nehlen.spookly.player.SpooklyPlayer;
 import de.nehlen.spookly.team.Team;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -30,6 +33,7 @@ public class PlayerQuitListener implements Listener {
                     .append(Component.translatable("general.quit.message",
                             event.getPlayer().displayName().color(StringData.getHighlightColor())
                     ).color(NamedTextColor.GRAY));
+
 
             if (GameState.state == GameState.LOBBY) {
                 event.quitMessage(quitMessage);
@@ -63,5 +67,12 @@ public class PlayerQuitListener implements Listener {
 //            Sentry.captureException(e);
             e.printStackTrace();
         }
+    }
+
+    @EventHandler
+    public void handleUnregister(PlayerUnregisterEvent event) {
+        SpooklyPlayer player = event.getSpooklyPlayer();
+        bingo.getPlayerStatisticsManager().savePlayerStatistics(player);
+        player.save();
     }
 }

@@ -5,6 +5,8 @@ import de.nehlen.bingo.data.GameData;
 import de.nehlen.bingo.data.GameState;
 import de.nehlen.bingo.data.StringData;
 import de.nehlen.bingo.util.Items;
+import de.nehlen.spookly.player.PlayerRegisterEvent;
+import de.nehlen.spookly.player.SpooklyPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.*;
@@ -34,7 +36,6 @@ public class PlayerJoinListener implements Listener {
         player.setGameMode(GameMode.ADVENTURE);
         event.joinMessage(Component.empty());
 
-        this.bingo.getUserFactory().createUser(player);
         Bukkit.getOnlinePlayers().forEach(this.bingo.getScoreboardManager()::setUserScoreboard);
 
         if (GameState.state == GameState.LOBBY) {
@@ -79,6 +80,12 @@ public class PlayerJoinListener implements Listener {
                     .append(Component.translatable("general.spectator.start").color(NamedTextColor.GRAY))
                     .append(Component.newline()));
         }
+    }
+
+    @EventHandler
+    public void handlePlayerRegister(PlayerRegisterEvent event) {
+        SpooklyPlayer player = event.getSpooklyPlayer();
+        bingo.getPlayerStatisticsManager().loadPlayerStatistics(player);
     }
 
     @EventHandler

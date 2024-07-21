@@ -1,11 +1,6 @@
 package de.nehlen.bingo.commands;
 
-import de.nehlen.bingo.bossbar.BossComponentHelper;
 import lombok.Getter;
-import net.kyori.adventure.bossbar.BossBar;
-import org.bukkit.Bukkit;
-import org.bukkit.boss.BarColor;
-import org.bukkit.boss.BarStyle;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

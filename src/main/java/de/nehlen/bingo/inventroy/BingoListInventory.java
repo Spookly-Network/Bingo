@@ -7,31 +7,63 @@ import de.nehlen.bingo.data.helper.TextComponentHelper;
 import de.nehlen.bingo.data.helper.TranslatableHelper;
 import de.nehlen.bingo.util.ItemBuilder;
 import de.nehlen.bingo.util.Items;
+import de.nehlen.spookly.inventory.AbstractSinglePageInventory;
 import de.nehlen.spookly.inventory.HandleResult;
 import de.nehlen.spookly.team.Team;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
+import org.ipvp.canvas.ClickInformation;
+import org.jetbrains.annotations.NotNull;
 
-public class BingoListInventory extends AbstractDropperInventory {
+import java.util.List;
 
-    public BingoListInventory(Player pLayer) {
-        super(TextComponentHelper.customUiInventoryTitle('\uE018'), pLayer);
+public class BingoListInventory extends AbstractSinglePageInventory {
+
+    private static final List<Integer> SLOTS = List.of(12, 13, 14, 21, 22, 23, 30, 31, 32);
+
+
+    public BingoListInventory(Player player) {
+        super(4, TextComponentHelper.menuBuilder()
+                .setBackground('\uE018')
+                .setTitle(Component.translatable("gamemode.bingo.gui.card"))
+                .build(), player);
         addItems();
     }
 
     private void addItems() {
+        addCloseItem();
+        
         if (GameState.state != GameState.INGAME || !GameData.getTeamCache().containsKey(player)) {
-            int i = 0;
-            for (Material material : GameData.getItemsToFind()) {
-                set(Items.createItem(material, 1), i, HandleResult.DENY_GRABBING);
-                i++;
-            }
+            addItemsToFind();
             return;
         }
 
+        addItemsForTeam();
+    }
+
+    private void addCloseItem() {
+        set(ItemBuilder.of(Material.PAPER)
+                .customModelData(20001)
+                .displayName(Component.translatable("gamemode.general.gui.close")
+                        .color(NamedTextColor.RED).
+                        decoration(TextDecoration.ITALIC, false))
+                .build(), 8, HandleResult.DENY_GRABBING, this::handleClose);
+    }
+
+    private void addItemsToFind() {
+        int i = 0;
+        for (Material material : GameData.getItemsToFind()) {
+            set(Items.createItem(material, 1), SLOTS.get(i), HandleResult.DENY_GRABBING);
+            i++;
+        }
+    }
+
+    private void addItemsForTeam() {
         Team team = GameData.getTeamCache().get(player());
         PickList pickList = (PickList) team.memory().get("picklist");
 
@@ -43,7 +75,7 @@ public class BingoListInventory extends AbstractDropperInventory {
                                 .color(NamedTextColor.RED)
                                 .decoration(TextDecoration.ITALIC, false))
                         .amount(1)
-                        .build(), i, HandleResult.DENY_GRABBING);
+                        .build(), SLOTS.get(i), HandleResult.DENY_GRABBING);
                 i++;
                 continue;
             }
@@ -51,8 +83,13 @@ public class BingoListInventory extends AbstractDropperInventory {
                     .displayName(Component.translatable("gamemode.bingo.inventory.items.done").color(NamedTextColor.GREEN))
                     .customModelData(10001)
                     .amount(1)
-                    .build(), i, HandleResult.DENY_GRABBING);
+                    .build(), SLOTS.get(i), HandleResult.DENY_GRABBING);
             i++;
         }
+    }
+
+    private void handleClose(@NotNull Player player, ClickInformation clickInformation) {
+        player.playSound(player, Sound.ITEM_BOOK_PAGE_TURN, SoundCategory.MASTER, 1, 1);
+        player.closeInventory();
     }
 }

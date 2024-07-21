@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-
 jobs:
   release:
     runs-on: ubuntu-18.04
@@ -27,4 +26,3 @@ jobs:
 
           # Create new deploy for this Sentry release
           sentry-cli releases deploys $SENTRY_RELEASE new -e $SENTRY_DEPLOY_ENVIRONMENT
-        

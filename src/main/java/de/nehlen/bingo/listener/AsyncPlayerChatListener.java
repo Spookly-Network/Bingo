@@ -33,17 +33,17 @@ public class AsyncPlayerChatListener implements Listener {
                     if (!GameData.getIngame().contains(players)) {
                         players.sendMessage(Component.text("✘ ").color(NamedTextColor.DARK_RED)
                                 .append(spooklyPlayer.nameTag())
-                                .append(Component.text(": ").color(NamedTextColor.GRAY))
+                                .append(Component.text(" ›› ").color(NamedTextColor.GRAY))
                                 .append(Spookly.getPlaceholderManager().replacePlaceholder(e.message(), context)));
                     }
                 } else {
                     players.sendMessage(spooklyPlayer.nameTag()
-                            .append(Component.text(": ").color(NamedTextColor.GRAY))
+                            .append(Component.text(" ›› ").color(NamedTextColor.GRAY))
                             .append(Spookly.getPlaceholderManager().replacePlaceholder(e.message(), context)));
                 }
             } else {
                 players.sendMessage(spooklyPlayer.nameTag()
-                        .append(Component.text(": ").color(NamedTextColor.GRAY))
+                        .append(Component.text(" ›› ").color(NamedTextColor.GRAY))
                         .append(Spookly.getPlaceholderManager().replacePlaceholder(e.message(), context)));
             }
         }

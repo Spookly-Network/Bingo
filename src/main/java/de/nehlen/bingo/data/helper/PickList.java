@@ -3,7 +3,7 @@ package de.nehlen.bingo.data.helper;
 import de.nehlen.bingo.Bingo;
 import de.nehlen.bingo.data.GameData;
 import de.nehlen.bingo.data.StringData;
-import de.nehlen.bingo.factory.UserFactory;
+import de.nehlen.bingo.statistics.player.BingoPlayerStats;
 import de.nehlen.spookly.Spookly;
 import de.nehlen.spookly.player.SpooklyPlayer;
 import de.nehlen.spookly.team.Team;
@@ -28,6 +28,7 @@ public class PickList {
 
     public void completeMaterial(Player player, Team team, Material material) {
         SpooklyPlayer spooklyPlayer = Spookly.getPlayer(player);
+        BingoPlayerStats statistics = Bingo.getBingo().getPlayerStatisticsManager().getPlayerStatistics(spooklyPlayer);
 
         if (!GameData.firstItemFound) {
             spooklyPlayer.addPoints(20);
@@ -40,8 +41,8 @@ public class PickList {
         }
 
         spooklyPlayer.addPoints(20);
+        statistics.setItemsCompleted(statistics.getItemsCrafted()+1);
         player.sendMessage(TextComponentHelper.addPointsComponent(20));
-        Bingo.getBingo().getUserFactory().updateCraftedItems(player, UserFactory.UpdateType.ADD, 1);
         items.remove(material);
 
         Bukkit.broadcast(StringData.getPrefix()
@@ -52,7 +53,7 @@ public class PickList {
                         Component.text(GameData.getItemsAmount())
                         ).color(NamedTextColor.GRAY)));
         if (isComplete()) {
-            Bingo.getBingo().getIngameCountdown().endPhase();
+            Bingo.getBingo().getIngamePhase().endPhase();
             Bingo.getBingo().getEndingPhase().teamWin(team);
         }
     }
