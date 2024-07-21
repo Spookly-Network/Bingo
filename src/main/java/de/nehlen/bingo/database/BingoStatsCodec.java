@@ -1,7 +1,7 @@
 package de.nehlen.bingo.database;
 
 import de.nehlen.bingo.statistics.player.BingoPlayerStats;
-import de.nehlen.spookly.database.DatabaseComponentCodec;
+import de.spookly.database.DatabaseComponentCodec;
 import org.bson.Document;
 
 public class BingoStatsCodec implements DatabaseComponentCodec<BingoPlayerStats> {

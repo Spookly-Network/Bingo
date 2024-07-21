@@ -1,7 +1,7 @@
 package de.nehlen.bingo.data;
 
 import de.nehlen.bingo.Bingo;
-import de.nehlen.spookly.team.Team;
+import de.spookly.team.Team;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.Bukkit;

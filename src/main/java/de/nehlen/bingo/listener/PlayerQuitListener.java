@@ -1,21 +1,21 @@
 package de.nehlen.bingo.listener;
 
-import de.nehlen.bingo.Bingo;
-import de.nehlen.bingo.data.GameData;
-import de.nehlen.bingo.data.GameState;
-import de.nehlen.bingo.data.StringData;
-import de.nehlen.bingo.statistics.player.BingoPlayerStats;
-import de.nehlen.spookly.Spookly;
-import de.nehlen.spookly.player.PlayerUnregisterEvent;
-import de.nehlen.spookly.player.SpooklyPlayer;
-import de.nehlen.spookly.team.Team;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import de.spookly.Spookly;
+import de.spookly.player.PlayerUnregisterEvent;
+import de.spookly.player.SpooklyPlayer;
+import de.spookly.team.Team;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import de.nehlen.bingo.Bingo;
+import de.nehlen.bingo.data.GameData;
+import de.nehlen.bingo.data.GameState;
+import de.nehlen.bingo.data.StringData;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class PlayerQuitListener implements Listener {
 

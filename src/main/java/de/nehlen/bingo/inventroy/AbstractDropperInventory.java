@@ -1,19 +1,19 @@
 package de.nehlen.bingo.inventroy;
 
-import de.nehlen.spookly.inventory.AbstractSinglePageInventory;
-import de.nehlen.spookly.inventory.HandleResult;
-import de.nehlen.spookly.inventory.SinglePageInventory;
-import net.kyori.adventure.text.Component;
+import de.spookly.canvas.Menu;
+import de.spookly.canvas.slot.ClickOptions;
+import de.spookly.canvas.slot.Slot;
+import de.spookly.canvas.slot.SlotSettings;
+import de.spookly.canvas.type.BoxMenu;
+import de.spookly.inventory.HandleResult;
+import de.spookly.inventory.SinglePageInventory;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
-import org.ipvp.canvas.Menu;
-import org.ipvp.canvas.slot.ClickOptions;
-import org.ipvp.canvas.slot.Slot;
-import org.ipvp.canvas.slot.SlotSettings;
-import org.ipvp.canvas.type.BoxMenu;
+
+import net.kyori.adventure.text.Component;
 
 public class AbstractDropperInventory implements SinglePageInventory {
 

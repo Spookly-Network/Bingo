@@ -1,20 +1,20 @@
 package de.nehlen.bingo.inventroy;
 
-import de.nehlen.bingo.data.GameData;
-import de.nehlen.spookly.Spookly;
-import de.nehlen.spookly.inventory.AbstractMultiPageInventory;
-import de.nehlen.spookly.inventory.HandleResult;
-import de.nehlen.spookly.player.SpooklyPlayer;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
+import java.util.UUID;
+
+import de.spookly.Spookly;
+import de.spookly.canvas.ClickInformation;
+import de.spookly.inventory.AbstractMultiPageInventory;
+import de.spookly.inventory.HandleResult;
+import de.spookly.player.SpooklyPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.ipvp.canvas.ClickInformation;
 
-import java.util.UUID;
+import de.nehlen.bingo.data.GameData;
+import net.kyori.adventure.text.Component;
 
 public class SpectatorInventory extends AbstractMultiPageInventory {
 
@@ -25,7 +25,7 @@ public class SpectatorInventory extends AbstractMultiPageInventory {
 
     private void addItems() {
         GameData.getIngame().forEach(onlinePlayer -> {
-            SpooklyPlayer spooklyPlayer = Spookly.getPlayer(player);
+            SpooklyPlayer spooklyPlayer = Spookly.getPlayer(player());
             ItemStack item = new ItemStack(Material.PLAYER_HEAD);
             SkullMeta meta = (SkullMeta) item.getItemMeta();
             meta.setOwningPlayer(onlinePlayer);
@@ -33,7 +33,7 @@ public class SpectatorInventory extends AbstractMultiPageInventory {
             item.setItemMeta(meta);
 
 
-            add(item, HandleResult.DENY_GRABBING, this::teleportSpectatorToPlayer, player.getUniqueId().toString());
+            add(item, HandleResult.DENY_GRABBING, this::teleportSpectatorToPlayer, player().getUniqueId().toString());
         });
     }
 

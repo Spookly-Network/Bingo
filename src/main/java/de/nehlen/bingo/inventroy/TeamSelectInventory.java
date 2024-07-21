@@ -4,10 +4,10 @@ import de.nehlen.bingo.data.GameData;
 import de.nehlen.bingo.data.StringData;
 import de.nehlen.bingo.data.helper.TextComponentHelper;
 import de.nehlen.bingo.util.ItemBuilder;
-import de.nehlen.spookly.Spookly;
-import de.nehlen.spookly.inventory.AbstractMultiPageInventory;
-import de.nehlen.spookly.inventory.HandleResult;
-import de.nehlen.spookly.team.Team;
+import de.spookly.Spookly;
+import de.spookly.inventory.AbstractMultiPageInventory;
+import de.spookly.inventory.HandleResult;
+import de.spookly.team.Team;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.Style;
@@ -16,11 +16,11 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.ipvp.canvas.ClickInformation;
-import org.ipvp.canvas.mask.BinaryMask;
-import org.ipvp.canvas.mask.Mask;
-import org.ipvp.canvas.mask.RecipeMask;
-import org.ipvp.canvas.slot.SlotSettings;
+import de.spookly.canvas.ClickInformation;
+import de.spookly.canvas.mask.BinaryMask;
+import de.spookly.canvas.mask.Mask;
+import de.spookly.canvas.mask.RecipeMask;
+import de.spookly.canvas.slot.SlotSettings;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -71,7 +71,7 @@ public class TeamSelectInventory extends AbstractMultiPageInventory {
                 lore.add(Component.text("- ").style(Style.style(NamedTextColor.GRAY))
                         .append(teamPlayer.displayName().decoration(TextDecoration.ITALIC, false)));
             });
-            if (team.registeredPlayers().contains(player)) {
+            if (team.registeredPlayers().contains(player())) {
                 add(ItemBuilder.of(Material.PAPER)
                         .displayName(team.teamName().decoration(TextDecoration.ITALIC, false))
                         .lore(lore)

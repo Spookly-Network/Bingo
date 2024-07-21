@@ -1,7 +1,7 @@
 package de.nehlen.bingo.util;
 
 import de.nehlen.bingo.Bingo;
-import de.nehlen.spookly.phase.GamePhase;
+import de.spookly.phase.GamePhase;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

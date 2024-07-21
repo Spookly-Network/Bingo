@@ -2,7 +2,7 @@ package de.nehlen.bingo.statistics.player;
 
 import de.nehlen.bingo.data.GameData;
 import de.nehlen.bingo.database.BingoStatsCodec;
-import de.nehlen.spookly.player.SpooklyOfflinePlayer;
+import de.spookly.player.SpooklyOfflinePlayer;
 
 import java.util.HashMap;
 import java.util.Map;

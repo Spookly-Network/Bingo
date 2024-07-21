@@ -1,7 +1,7 @@
 package de.nehlen.bingo;
 
 import de.nehlen.bingo.data.GameData;
-import de.nehlen.spookly.team.Team;
+import de.spookly.team.Team;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

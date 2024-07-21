@@ -4,7 +4,7 @@ import de.nehlen.bingo.Bingo;
 import de.nehlen.bingo.data.GameData;
 import de.nehlen.bingo.data.StringData;
 import de.nehlen.bingo.util.AbstractGamePhase;
-import de.nehlen.spookly.team.Team;
+import de.spookly.team.Team;
 import de.nehlen.spooklycloudnetutils.helper.CloudStateHelper;
 import de.nehlen.spooklycloudnetutils.helper.CloudWrapperHelper;
 import net.kyori.adventure.text.Component;

@@ -1,5 +1,16 @@
 package de.nehlen.bingo.inventroy;
 
+import java.util.List;
+
+import de.spookly.canvas.ClickInformation;
+import de.spookly.inventory.AbstractSinglePageInventory;
+import de.spookly.inventory.HandleResult;
+import de.spookly.team.Team;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.entity.Player;
+
 import de.nehlen.bingo.data.GameData;
 import de.nehlen.bingo.data.GameState;
 import de.nehlen.bingo.data.helper.PickList;
@@ -7,20 +18,10 @@ import de.nehlen.bingo.data.helper.TextComponentHelper;
 import de.nehlen.bingo.data.helper.TranslatableHelper;
 import de.nehlen.bingo.util.ItemBuilder;
 import de.nehlen.bingo.util.Items;
-import de.nehlen.spookly.inventory.AbstractSinglePageInventory;
-import de.nehlen.spookly.inventory.HandleResult;
-import de.nehlen.spookly.team.Team;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.SoundCategory;
-import org.bukkit.entity.Player;
-import org.ipvp.canvas.ClickInformation;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class BingoListInventory extends AbstractSinglePageInventory {
 
@@ -38,7 +39,7 @@ public class BingoListInventory extends AbstractSinglePageInventory {
     private void addItems() {
         addCloseItem();
         
-        if (GameState.state != GameState.INGAME || !GameData.getTeamCache().containsKey(player)) {
+        if (GameState.state != GameState.INGAME || !GameData.getTeamCache().containsKey(player())) {
             addItemsToFind();
             return;
         }

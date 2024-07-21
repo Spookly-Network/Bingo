@@ -1,52 +1,52 @@
 package de.nehlen.bingo.listener;
 
-import de.nehlen.bingo.data.GameData;
-import de.nehlen.bingo.data.GameState;
-import de.nehlen.spookly.Spookly;
-import de.nehlen.spookly.placeholder.PlaceholderContext;
-import de.nehlen.spookly.player.SpooklyPlayer;
-import io.papermc.paper.event.player.AsyncChatEvent;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
+import de.spookly.Spookly;
+import de.spookly.placeholder.PlaceholderContext;
+import de.spookly.player.SpooklyPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import de.nehlen.bingo.data.GameData;
+import de.nehlen.bingo.data.GameState;
+import io.papermc.paper.chat.ChatRenderer;
+import io.papermc.paper.event.player.AsyncChatEvent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+
 public class AsyncPlayerChatListener implements Listener {
 
-    public AsyncPlayerChatListener() {}
+    public AsyncPlayerChatListener() {
+    }
 
     @EventHandler
-    public void onChat(AsyncChatEvent e) {
+    public void onChat(AsyncChatEvent event) {
+        Player player = event.getPlayer();
+        SpooklyPlayer spooklyPlayer = Spookly.getPlayer(player);
 
-        Player p = e.getPlayer();
-        SpooklyPlayer spooklyPlayer = Spookly.getPlayer(p);
-
-        e.setCancelled(true);
-
-        for (Player players : Bukkit.getOnlinePlayers()) {
-            PlaceholderContext context = new PlaceholderContext(players, PlaceholderContext.PlaceholderType.CHAT);
-
-            if (GameState.state != GameState.END) {
-                if (!GameData.getIngame().contains(p)) {
-                    if (!GameData.getIngame().contains(players)) {
-                        players.sendMessage(Component.text("✘ ").color(NamedTextColor.DARK_RED)
-                                .append(spooklyPlayer.nameTag())
-                                .append(Component.text(" ›› ").color(NamedTextColor.GRAY))
-                                .append(Spookly.getPlaceholderManager().replacePlaceholder(e.message(), context)));
-                    }
-                } else {
-                    players.sendMessage(spooklyPlayer.nameTag()
-                            .append(Component.text(" ›› ").color(NamedTextColor.GRAY))
-                            .append(Spookly.getPlaceholderManager().replacePlaceholder(e.message(), context)));
-                }
+        if (GameState.state != GameState.END) {
+            if (!GameData.getIngame().contains(player)) {
+                event.renderer(spectateChatRenderer(spooklyPlayer));
             } else {
-                players.sendMessage(spooklyPlayer.nameTag()
-                        .append(Component.text(" ›› ").color(NamedTextColor.GRAY))
-                        .append(Spookly.getPlaceholderManager().replacePlaceholder(e.message(), context)));
+                event.renderer(spooklyPlayer.getChatRenderer());
             }
+        } else {
+            event.renderer(spooklyPlayer.getChatRenderer());
         }
+    }
+
+    public ChatRenderer spectateChatRenderer(SpooklyPlayer player) {
+        return (source, sourceDisplayName, message, viewer) -> {
+            PlaceholderContext context = new PlaceholderContext(source, PlaceholderContext.PlaceholderType.CHAT);
+
+            return (Component) Component.text()
+                    .append(Component.text("✘ ").color(NamedTextColor.DARK_RED))
+                    .append(player.prefix())
+                    .append(sourceDisplayName.color(player.nameColor()))
+                    .append(Component.text(" \u203A\u203A ").color(NamedTextColor.GRAY)) // Separator ››
+                    .append(Spookly.getPlaceholderManager().replacePlaceholder(message, context))
+                    .build();
+        };
     }
 }
 

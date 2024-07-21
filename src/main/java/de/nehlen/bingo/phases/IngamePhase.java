@@ -1,36 +1,35 @@
 package de.nehlen.bingo.phases;
 
-import de.nehlen.bingo.Bingo;
-import de.nehlen.bingo.bossbar.BossBarManager;
-import de.nehlen.bingo.bossbar.BossBarSection;
-import de.nehlen.bingo.bossbar.BossComponentHelper;
-import de.nehlen.bingo.commands.hudCommand;
-import de.nehlen.bingo.data.GameData;
-import de.nehlen.bingo.data.GameState;
-import de.nehlen.bingo.data.StringData;
-import de.nehlen.bingo.data.helper.PickList;
-import de.nehlen.bingo.data.helper.TextComponentHelper;
-import de.nehlen.bingo.statistics.player.BingoPlayerStats;
-import de.nehlen.bingo.util.AbstractGamePhase;
-import de.nehlen.bingo.util.UtilFunctions;
-import de.nehlen.spookly.Spookly;
-import de.nehlen.spookly.placeholder.Placeholder;
-import de.nehlen.spookly.placeholder.PlaceholderContext;
-import de.nehlen.spookly.team.Team;
-import de.nehlen.spooklycloudnetutils.helper.CloudStateHelper;
-import net.kyori.adventure.bossbar.BossBar;
-import net.kyori.adventure.key.Key;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.entity.Player;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import de.spookly.Spookly;
+import de.spookly.placeholder.Placeholder;
+import de.spookly.placeholder.PlaceholderContext;
+import de.spookly.team.Team;
+import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
+import org.bukkit.entity.Player;
+
+import de.nehlen.bingo.Bingo;
+import de.nehlen.bingo.bossbar.BossBarManager;
+import de.nehlen.bingo.bossbar.BossBarSection;
+import de.nehlen.bingo.bossbar.BossComponentHelper;
+import de.nehlen.bingo.data.GameData;
+import de.nehlen.bingo.data.GameState;
+import de.nehlen.bingo.data.StringData;
+import de.nehlen.bingo.data.helper.PickList;
+import de.nehlen.bingo.statistics.player.BingoPlayerStats;
+import de.nehlen.bingo.util.AbstractGamePhase;
+import de.nehlen.bingo.util.UtilFunctions;
+import de.nehlen.spooklycloudnetutils.helper.CloudStateHelper;
+import net.kyori.adventure.bossbar.BossBar;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 
 public class IngamePhase extends AbstractGamePhase {
     private final Bingo bingo;
@@ -143,8 +142,6 @@ public class IngamePhase extends AbstractGamePhase {
                 });
             });*/
             //TODO WIP end
-
-
 
 
             if (counter == 0) {

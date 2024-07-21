@@ -1,8 +1,8 @@
 package de.nehlen.bingo.util.playerheads;
 
 import de.nehlen.bingo.util.fonts.ComponentFont;
-import de.nehlen.spookly.Spookly;
-import de.nehlen.spookly.player.SpooklyPlayer;
+import de.spookly.Spookly;
+import de.spookly.player.SpooklyPlayer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;

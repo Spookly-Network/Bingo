@@ -2,8 +2,8 @@ package de.nehlen.bingo.bossbar;
 
 import de.nehlen.bingo.Bingo;
 import de.nehlen.bingo.data.helper.TextComponentHelper;
-import de.nehlen.spookly.Spookly;
-import de.nehlen.spookly.placeholder.PlaceholderContext;
+import de.spookly.Spookly;
+import de.spookly.placeholder.PlaceholderContext;
 import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;

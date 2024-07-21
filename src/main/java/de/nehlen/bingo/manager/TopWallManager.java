@@ -1,13 +1,10 @@
 package de.nehlen.bingo.manager;
 
-import com.destroystokyo.paper.profile.PlayerProfile;
-import com.destroystokyo.paper.profile.ProfileProperty;
-import com.mongodb.reactivestreams.client.MongoCollection;
-import de.nehlen.bingo.Bingo;
-import de.nehlen.spookly.Spookly;
-import de.nehlen.spookly.player.SpooklyOfflinePlayer;
-import net.kyori.adventure.text.Component;
-import org.bson.Document;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+import de.spookly.Spookly;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -15,14 +12,17 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.Skull;
 import org.bukkit.block.sign.Side;
 import org.bukkit.block.sign.SignSide;
+
+import com.destroystokyo.paper.profile.PlayerProfile;
+import com.destroystokyo.paper.profile.ProfileProperty;
+import com.mongodb.reactivestreams.client.MongoCollection;
+import de.nehlen.bingo.Bingo;
+import net.kyori.adventure.text.Component;
+import org.bson.Document;
 import org.reactivestreams.Subscriber;
 import org.reactivestreams.Subscription;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-
-import static com.mongodb.client.model.Sorts.descending;
+import static com.mongodb.client.model.Indexes.descending;
 
 public class TopWallManager {
 
@@ -62,7 +62,8 @@ public class TopWallManager {
                     }
 
                     @Override
-                    public void onError(Throwable throwable) {}
+                    public void onError(Throwable throwable) {
+                    }
 
                     @Override
                     public void onComplete() {

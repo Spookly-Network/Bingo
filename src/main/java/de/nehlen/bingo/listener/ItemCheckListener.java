@@ -1,13 +1,6 @@
 package de.nehlen.bingo.listener;
 
-import de.nehlen.bingo.Bingo;
-import de.nehlen.bingo.data.GameData;
-import de.nehlen.bingo.data.GameState;
-import de.nehlen.bingo.data.helper.PickList;
-import de.nehlen.spookly.team.Team;
-import lombok.AllArgsConstructor;
-import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
+import de.spookly.team.Team;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -19,9 +12,12 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerBucketEntityEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
-import org.bukkit.event.player.PlayerBucketFishEvent;
 
-import java.util.List;
+import de.nehlen.bingo.Bingo;
+import de.nehlen.bingo.data.GameData;
+import de.nehlen.bingo.data.GameState;
+import de.nehlen.bingo.data.helper.PickList;
+import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class ItemCheckListener implements Listener {

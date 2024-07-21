@@ -1,10 +1,10 @@
 package de.nehlen.bingo.listener;
 
 import de.nehlen.bingo.data.GameData;
-import de.nehlen.spookly.Spookly;
-import de.nehlen.spookly.player.SpooklyPlayer;
-import de.nehlen.spookly.team.PlayerJoinTeamEvent;
-import de.nehlen.spookly.team.PlayerQuitTeamEvent;
+import de.spookly.Spookly;
+import de.spookly.player.SpooklyPlayer;
+import de.spookly.team.PlayerJoinTeamEvent;
+import de.spookly.team.PlayerQuitTeamEvent;
 import org.bukkit.event.Listener;
 
 public class TeamListener implements Listener {

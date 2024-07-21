@@ -11,15 +11,14 @@ import de.nehlen.bingo.phases.IngamePhase;
 import de.nehlen.bingo.phases.LobbyPhase;
 import de.nehlen.bingo.phases.TeleportPhase;
 import de.nehlen.bingo.statistics.player.PlayerStatisticsManager;
-import de.nehlen.spookly.Spookly;
-import de.nehlen.spookly.configuration.ConfigurationWrapper;
-import de.nehlen.spookly.plugin.SpooklyPlugin;
+import de.spookly.Spookly;
+import de.spookly.configuration.ConfigurationWrapper;
+import de.spookly.plugin.SpooklyPlugin;
 import de.nehlen.spooklycloudnetutils.helper.CloudStateHelper;
 import de.nehlen.spooklycloudnetutils.helper.CloudWrapperHelper;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.WorldCreator;
-import org.ipvp.canvas.MenuFunctionListener;
 
 import java.io.File;
 import java.util.Objects;
@@ -119,7 +118,6 @@ public class Bingo extends SpooklyPlugin {
         // SET BINGO ITEMS IN GAMEDATA
         LobbyPhase.fillItemList();
 
-        registerEvent(new MenuFunctionListener());
         registerEvent(this.asyncPlayerChatListener);
         registerEvent(this.damageListener);
         registerEvent(this.foodLevelChangeListener);
@@ -143,10 +141,7 @@ public class Bingo extends SpooklyPlugin {
         registerCommandOnly("backpack", this.backpackCommand);
         registerCommandOnly("stats", this.statsCommand);
         registerCommandOnly("hud", new hudCommand());
-//        registerCommandOnly("test", new TestCmd());
         this.worldManager.setWorldSettingsForLobbyWorlds(Objects.requireNonNull(Bukkit.getWorld("Lobby_Bingo")));
-
-        postStartup();
     }
 
     @Override

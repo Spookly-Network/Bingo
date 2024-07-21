@@ -11,7 +11,7 @@ import de.nehlen.bingo.data.helper.TranslatableHelper;
 import de.nehlen.bingo.sidebar.Sidebar;
 import de.nehlen.bingo.sidebar.SidebarCache;
 import de.nehlen.bingo.util.UtilFunctions;
-import de.nehlen.spookly.team.Team;
+import de.spookly.team.Team;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextReplacementConfig;
 import net.kyori.adventure.text.format.NamedTextColor;

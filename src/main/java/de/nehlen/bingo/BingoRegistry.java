@@ -2,8 +2,8 @@ package de.nehlen.bingo;
 
 import de.nehlen.bingo.data.GameData;
 import de.nehlen.bingo.data.helper.PickList;
-import de.nehlen.spookly.Spookly;
-import de.nehlen.spookly.configuration.ConfigurationWrapper;
+import de.spookly.Spookly;
+import de.spookly.configuration.ConfigurationWrapper;
 import lombok.Getter;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.text.Component;
